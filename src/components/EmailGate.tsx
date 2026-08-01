@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { isValidEmail, unlockSession } from "@/lib/session";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { LocaleToggle } from "@/lib/i18n/LocaleToggle";
@@ -11,6 +12,7 @@ type Props = {
 
 export function EmailGate({ onUnlock }: Props) {
   const { t } = useLocale();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -26,6 +28,7 @@ export function EmailGate({ onUnlock }: Props) {
     }
     unlockSession(value);
     onUnlock(value.trim());
+    router.replace("/");
   }
 
   function handleSubmit(e: FormEvent) {
