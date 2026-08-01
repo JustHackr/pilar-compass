@@ -1,0 +1,20 @@
+{
+  "universities": [
+    { "name": "Universitas Indonesia (UI)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Institut Teknologi Bandung (ITB)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Universitas Gadjah Mada (UGM)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Universitas Padjadjaran (Unpad)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Universitas Airlangga (Unair)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Universitas Pelita Harapan (UPH)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Binus University", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Institut Teknologi Sepuluh Nopember (ITS)", "country": "Indonesia", "region": "indonesia" },
+    { "name": "Australian National University (ANU)", "country": "Australia", "region": "abroad" },
+    { "name": "University of Melbourne", "country": "Australia", "region": "abroad" },
+    { "name": "National University of Singapore (NUS)", "country": "Singapore", "region": "abroad" },
+    { "name": "Nanyang Technological University (NTU)", "country": "Singapore", "region": "abroad" },
+    { "name": "University of Tokyo", "country": "Japan", "region": "abroad" },
+    { "name": "Ritsumeikan University", "country": "Japan", "region": "abroad" },
+    { "name": "University of Toronto", "country": "Canada", "region": "abroad" },
+    { "name": "University of California, Los Angeles (UCLA)", "country": "United States", "region": "abroad" }
+  ]
+}

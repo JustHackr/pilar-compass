@@ -1,0 +1,178 @@
+{
+  "competitions": [
+    {
+      "id": "math-challenge-2026",
+      "name": "Mathematics Challenge 2026 (ULM)",
+      "scope": "indonesia",
+      "field": "stem",
+      "level": "both",
+      "registrationDeadline": "2026-08-31",
+      "eventStart": "2026-09-26",
+      "description": "Open national math contest by HIMATIKA REAL FMIPA Universitas Lambung Mangkurat. Gelombang 3 registration open for SMA se-Indonesia (SMP track is Kalimantan-only). First-entry — no prior olympiad stage required.",
+      "url": "https://mathematicschallenge.com/",
+      "links": [
+        { "label": "Announcement (RRI)", "url": "https://rri.co.id/banjarmasin/iptek/2414019/mathematics-challenge-2026-dorong-prestasi-matematika-nasional", "kind": "post" },
+        { "label": "Official website", "url": "https://mathematicschallenge.com/", "kind": "website" },
+        { "label": "Register now", "url": "https://mathematicschallenge.com/", "kind": "register" },
+        { "label": "Instagram @mathematics_challenge", "url": "https://www.instagram.com/mathematics_challenge/", "kind": "instagram" }
+      ],
+      "tags": ["math", "open-registration", "ulm"]
+    },
+    {
+      "id": "msi-tn-2026",
+      "name": "MSI — Matematika, Sains & Bahasa Inggris (SMA Taruna Nusantara)",
+      "scope": "indonesia",
+      "field": "multidisciplinary",
+      "level": "senior",
+      "registrationDeadline": "2026-10-06",
+      "eventStart": "2026-10-11",
+      "description": "Open school competition (math, science, English) hosted by SMA Taruna Nusantara. Registration open from 1 August 2026 — first round is online; no national olympiad prerequisite.",
+      "url": "https://msilkip.tarunanusantara.sch.id/",
+      "links": [
+        { "label": "Official MSI & LKIP page", "url": "https://msilkip.tarunanusantara.sch.id/", "kind": "post" },
+        { "label": "Register / info hub", "url": "https://msilkip.tarunanusantara.sch.id/", "kind": "register" },
+        { "label": "Contact page", "url": "https://msilkip.tarunanusantara.sch.id/contact/", "kind": "info" },
+        { "label": "Instagram @sma.tarunanusantara", "url": "https://www.instagram.com/sma.tarunanusantara/", "kind": "instagram" },
+        { "label": "Facebook SMA TN", "url": "https://www.facebook.com/SMA.Taruna.Nusantara/", "kind": "facebook" }
+      ],
+      "tags": ["msi", "taruna-nusantara", "open-registration"]
+    },
+    {
+      "id": "lkip-ilmiah-2026",
+      "name": "LKIP — Lomba Karya Inovasi Pelajar (Karya Ilmiah)",
+      "scope": "indonesia",
+      "field": "stem",
+      "level": "both",
+      "registrationDeadline": "2026-09-29",
+      "eventStart": "2026-10-17",
+      "description": "Open research / scientific-work competition for SMP–SMA by SMA Taruna Nusantara. First submission window — no OSP/OSN medal required.",
+      "url": "https://msilkip.tarunanusantara.sch.id/",
+      "links": [
+        { "label": "Official LKIP announcement page", "url": "https://msilkip.tarunanusantara.sch.id/", "kind": "post" },
+        { "label": "Register / guidelines", "url": "https://msilkip.tarunanusantara.sch.id/", "kind": "register" },
+        { "label": "Instagram @sma.tarunanusantara", "url": "https://www.instagram.com/sma.tarunanusantara/", "kind": "instagram" }
+      ],
+      "tags": ["research", "lkip", "open-registration"]
+    },
+    {
+      "id": "lkip-poster-2026",
+      "name": "LKIP — Poster Competition (SMA Taruna Nusantara)",
+      "scope": "indonesia",
+      "field": "arts",
+      "level": "both",
+      "registrationDeadline": "2026-10-10",
+      "eventStart": "2026-10-25",
+      "description": "Open poster track under LKIP. Registration from 1 August 2026 — suitable for JH/SH creative STEM communication.",
+      "url": "https://msilkip.tarunanusantara.sch.id/",
+      "links": [
+        { "label": "Official LKIP page", "url": "https://msilkip.tarunanusantara.sch.id/", "kind": "post" },
+        { "label": "Register", "url": "https://msilkip.tarunanusantara.sch.id/", "kind": "register" },
+        { "label": "Instagram @sma.tarunanusantara", "url": "https://www.instagram.com/sma.tarunanusantara/", "kind": "instagram" }
+      ],
+      "tags": ["poster", "lkip", "open-registration"]
+    },
+    {
+      "id": "apotema-lkti-2026",
+      "name": "LKTIN APOTEMA 2026 (Karya Tulis Ilmiah SMA)",
+      "scope": "indonesia",
+      "field": "stem",
+      "level": "senior",
+      "registrationDeadline": "2026-08-04",
+      "description": "Open national scientific writing contest for SMA/MA/SMK by HMPS Tadris Matematika UIN SATU. Abstract registration closes 4 August 2026 — enter directly (pay only if abstract passes).",
+      "url": "https://apotema.hmpstmt.com/lkti/",
+      "links": [
+        { "label": "Announcement & rules page", "url": "https://apotema.hmpstmt.com/lkti/", "kind": "post" },
+        { "label": "APOTEMA home", "url": "https://apotema.hmpstmt.com/", "kind": "website" },
+        { "label": "Register / submit abstract", "url": "https://apotema.hmpstmt.com/lkti/", "kind": "register" },
+        { "label": "Instagram @apotema_uinsatu", "url": "https://www.instagram.com/apotema_uinsatu/", "kind": "instagram" }
+      ],
+      "tags": ["lkti", "writing", "open-registration"]
+    },
+    {
+      "id": "orbit-literasi-2026",
+      "name": "Anugerah Literasi ORBIT 2026",
+      "scope": "indonesia",
+      "field": "language",
+      "level": "both",
+      "registrationDeadline": "2026-08-09",
+      "description": "Free national writing contest (short story or opinion article) for SMP & SMA with Badan Bahasa / ORBIT Edutech. Open submission until 9 August 2026 — no prior competition required.",
+      "url": "https://campusnet.news/anugerah-literasi-orbit-2026/",
+      "links": [
+        { "label": "Announcement article", "url": "https://campusnet.news/anugerah-literasi-orbit-2026/", "kind": "post" },
+        { "label": "Instagram @orbitprogram (register links in bio)", "url": "https://www.instagram.com/orbitprogram/", "kind": "instagram" }
+      ],
+      "tags": ["writing", "literasi", "free", "open-registration"]
+    },
+    {
+      "id": "nrc-essay-2026",
+      "name": "National Research Competition (NRC) 2026 — Essay track",
+      "scope": "indonesia",
+      "field": "humanities",
+      "level": "senior",
+      "registrationDeadline": "2026-08-20",
+      "eventStart": "2026-10-12",
+      "description": "Open national essay track for SMA/SMK & university students by UKM SMART Politeknik Negeri Lampung. Gelombang 1 closes 20 August 2026 — first-entry (no olympiad medal required).",
+      "url": "https://www.kabarlomba.com/2026/07/national-research-competition-nrc-2026.html",
+      "links": [
+        { "label": "Full announcement post", "url": "https://www.kabarlomba.com/2026/07/national-research-competition-nrc-2026.html", "kind": "post" },
+        { "label": "Register (s.id/nrc2026)", "url": "https://s.id/nrc2026", "kind": "register" },
+        { "label": "Instagram @kabarlomba_com", "url": "https://www.instagram.com/kabarlomba_com/", "kind": "instagram" }
+      ],
+      "tags": ["essay", "nrc", "open-registration"]
+    },
+    {
+      "id": "nrc-poster-2026",
+      "name": "National Research Competition (NRC) 2026 — Poster track",
+      "scope": "indonesia",
+      "field": "arts",
+      "level": "senior",
+      "registrationDeadline": "2026-09-21",
+      "eventStart": "2026-10-12",
+      "description": "Open poster design track (pelajar / mahasiswa / general). Gelombang 2 runs 21 August–21 September 2026.",
+      "url": "https://www.kabarlomba.com/2026/07/national-research-competition-nrc-2026.html",
+      "links": [
+        { "label": "Full announcement post", "url": "https://www.kabarlomba.com/2026/07/national-research-competition-nrc-2026.html", "kind": "post" },
+        { "label": "Register (s.id/nrc2026)", "url": "https://s.id/nrc2026", "kind": "register" },
+        { "label": "Instagram @kabarlomba_com", "url": "https://www.instagram.com/kabarlomba_com/", "kind": "instagram" }
+      ],
+      "tags": ["poster", "nrc", "open-registration"]
+    },
+    {
+      "id": "iymc-2026",
+      "name": "International Youth Math Challenge (IYMC) 2026 — Qualification",
+      "scope": "international",
+      "field": "stem",
+      "level": "both",
+      "registrationDeadline": "2026-09-27",
+      "description": "Open global online math challenge. Qualification round is free/direct entry (download problems + submit by 27 September 2026). Later rounds need a qualifying score — this listing is for the open first round only.",
+      "url": "https://iymc.info/",
+      "links": [
+        { "label": "Official website", "url": "https://iymc.info/", "kind": "website" },
+        { "label": "2026 flyer (PDF)", "url": "https://www.iymc.info/docs/IYMC_Flyer.pdf", "kind": "post" },
+        { "label": "Qualification problems 2026 (PDF)", "url": "https://iymc.info/docs/problems/2026/QR/en/IYMC_Qualification_Round_2026.pdf", "kind": "register" },
+        { "label": "Submission portal", "url": "https://iymc.info/submission", "kind": "register" },
+        { "label": "Instagram @iymc.info", "url": "https://www.instagram.com/iymc.info/", "kind": "instagram" },
+        { "label": "Facebook @theIYMC", "url": "https://www.facebook.com/theIYMC", "kind": "facebook" }
+      ],
+      "tags": ["math", "international", "open-registration"]
+    },
+    {
+      "id": "nasa-space-apps-2026",
+      "name": "NASA International Space Apps Challenge 2026",
+      "scope": "international",
+      "field": "multidisciplinary",
+      "level": "both",
+      "registrationDeadline": "2026-11-15",
+      "eventStart": "2026-11-14",
+      "description": "Open global hackathon (software, data, storytelling). Registration opens 26 August 2026 — anyone can join a local or virtual event; no olympiad prerequisite.",
+      "url": "https://www.spaceappschallenge.org/",
+      "links": [
+        { "label": "2026 dates / FAQ post", "url": "https://www.spaceappschallenge.org/resources/participant-faqs/", "kind": "post" },
+        { "label": "Official Space Apps site", "url": "https://www.spaceappschallenge.org/", "kind": "website" },
+        { "label": "Register (opens 26 Aug 2026)", "url": "https://www.spaceappschallenge.org/2026/", "kind": "register" },
+        { "label": "Instagram @nasa", "url": "https://www.instagram.com/nasa/", "kind": "instagram" }
+      ],
+      "tags": ["hackathon", "space", "open-registration"]
+    }
+  ]
+}

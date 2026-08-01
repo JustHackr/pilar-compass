@@ -1,0 +1,133 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { clearSession } from "@/lib/session";
+import { resetTour } from "@/lib/tour";
+import { useLocale } from "@/lib/i18n/LocaleContext";
+import { LocaleToggle } from "@/lib/i18n/LocaleToggle";
+import { OnboardingTour } from "@/components/OnboardingTour";
+
+type Props = {
+  email: string;
+  onSignOut: () => void;
+  children: React.ReactNode;
+};
+
+export function AppShell({ email, onSignOut, children }: Props) {
+  const pathname = usePathname();
+  const { t } = useLocale();
+  const [replayTour, setReplayTour] = useState(false);
+
+  function signOut() {
+    clearSession();
+    onSignOut();
+  }
+
+  function showIntro() {
+    resetTour();
+    setReplayTour(true);
+  }
+
+  const links = [
+    { href: "/", label: t("nav.home") },
+    { href: "/competitions", label: t("nav.competitions") },
+    { href: "/calculator", label: t("nav.calculator") },
+  ];
+
+  return (
+    <div className="app-shell">
+      <div className="topbar">
+        <div className="topbar-inner">
+          <div className="topbar-contact">
+            <a href="mailto:spi@pilar.sch.id">spi@pilar.sch.id</a>
+            <span className="topbar-sep">·</span>
+            <span>{t("topbar.forStudents")}</span>
+          </div>
+          <div className="topbar-right">
+            <LocaleToggle />
+            <span className="topbar-email" title={email}>
+              {email}
+            </span>
+            <button type="button" className="topbar-signout" onClick={signOut}>
+              {t("topbar.signOut")}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <header className="site-header">
+        <div className="header-inner">
+          <Link href="/" className="logo-lockup">
+            <Image
+              src="/spi-logo.png"
+              alt="Sekolah Pilar Indonesia"
+              width={200}
+              height={56}
+              className="spi-logo"
+              priority
+            />
+            <span className="logo-product">
+              <strong>Pilar Compass</strong>
+              <small>{t("logo.product")}</small>
+            </span>
+          </Link>
+
+          <nav className="site-nav" aria-label="Primary">
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={pathname === l.href ? "nav-link active" : "nav-link"}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      <main className="site-main">{children}</main>
+
+      <OnboardingTour
+        forceOpen={replayTour}
+        onClose={() => setReplayTour(false)}
+      />
+
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div>
+            <h3>PILAR INDONESIA</h3>
+            <p>{t("footer.tagline")}</p>
+          </div>
+          <div>
+            <h3>Pilar Compass</h3>
+            <p>{t("footer.compass")}</p>
+            <p>
+              <button type="button" className="footer-link-btn" onClick={showIntro}>
+                {t("tour.replay")}
+              </button>
+            </p>
+          </div>
+          <div>
+            <h3>{t("footer.info")}</h3>
+            <p>
+              <a
+                href="https://sekolah-pilar-indonesia.sch.id/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                sekolah-pilar-indonesia.sch.id
+              </a>
+            </p>
+            <p>
+              <a href="mailto:spi@pilar.sch.id">spi@pilar.sch.id</a>
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

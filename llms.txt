@@ -1,0 +1,33 @@
+# Pilar Compass
+
+> For Sekolah Pilar Indonesia students — find open academic competitions and estimate a transparent university match %.
+
+## Product
+- School: Sekolah Pilar Indonesia (https://sekolah-pilar-indonesia.sch.id/)
+- Audience: SPI Junior & Senior High (members only via soft email gate; prototype accepts any email)
+- Modules: Competition finder + University match calculator
+
+## Docs
+- [PRD](docs/PRD.md)
+- [RFC](docs/RFC.md)
+
+## Stack
+Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · Netlify
+
+## Run locally
+```bash
+npm install
+npm run dev
+```
+
+## Test
+```bash
+npm test
+```
+
+## Deploy
+Connect this repo to Netlify (see `netlify.toml`). Build command: `npm run build`.
+
+## Honesty notes
+- Competition list is curated JSON (not live scrape). Refresh re-filters by today's date.
+- Match % is an illustrative heuristic with visible weights — not official admissions odds.
