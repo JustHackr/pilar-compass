@@ -1,147 +1,219 @@
 # RFC — Pilar Compass
 
-**Status:** Accepted for workshop MVP  
-**Date:** 2026-08-01  
-**PRD:** [docs/PRD.md](./PRD.md)  
-**Product:** Pilar Compass for Sekolah Pilar Indonesia  
-**Author:** SPI builder + Cursor agents
+| Field | Value |
+|-------|--------|
+| **Status** | Accepted · Implemented (workshop MVP) |
+| **Date** | 2026-08-01 |
+| **PRD** | [docs/PRD.md](./PRD.md) |
+| **Product** | Pilar Compass — Sekolah Pilar Indonesia |
+| **Live** | https://pilar-compass.vercel.app |
+| **Repo** | https://github.com/JustHackr/pilar-compass |
+| **Author** | SPI builder + Cursor agents |
 
 ---
 
 ## 1. Summary
 
-Build a client-heavy Next.js web app with (1) a soft email gate, (2) a curated competition finder, and (3) a transparent university match calculator. Deploy to Netlify within the workshop window. No backend database; no live scraping; OCR deferred to stretch.
+Pilar Compass is a **client-heavy Next.js 16** web app that helps Sekolah Pilar Indonesia (SPI) students (1) find **first-entry competitions still open to register**, and (2) compute a **transparent university match %** from Kurikulum Merdeka scores with a short roadmap.
+
+**Architectural stance:** no backend database, no live scrape, no OAuth. Session unlock, curated JSON, pure TypeScript scoring, browser OCR, and EN/ID locale all run in the client. Host on **Vercel** (Next.js-native).
+
+This RFC maps every Must PRD story to a concrete module, records tradeoffs, and documents the as-built design judges can verify against the repo and live URL.
 
 ---
 
-## 2. Solution design (PRD → system)
+## 2. Goals of this RFC
+
+1. Turn the locked PRD into an implementable system with clear module boundaries.
+2. Lock stack, data shapes, scoring math, and deploy path so agents/humans build the same product.
+3. Make honesty explicit: curated data, heuristic match %, soft email gate.
+4. Capture post-grill expansions that shipped in-window: **OCR**, **EN/ID**, **onboarding tour**, **announcement-link competitions**.
+
+---
+
+## 3. System architecture
 
 ```mermaid
 flowchart TB
-  subgraph access [Access]
+  subgraph access [Access layer]
     Gate[EmailGate]
+    Tour[OnboardingTour]
+    Locale[LocaleProvider EN/ID]
     Session[localStorage session]
   end
-  subgraph pages [App Router pages]
-    Home[Landing]
-    Comp[/competitions]
-    Calc[/calculator]
+
+  subgraph shell [App shell]
+    Nav[AppShell nav + locale toggle]
+    Home[Landing /]
+    CompPage[/competitions]
+    CalcPage[/calculator]
   end
-  subgraph data [Static / client logic]
-    JSON[competitions.json]
-    Filter[filterSortByDeadline]
-    Scores[scoreEngine]
-    Roadmap[roadmapBuilder]
+
+  subgraph comps [Competitions domain]
+    CJSON[data/competitions.json]
+    CLib[lib/competitions.ts]
+    Links[lib/links.ts]
+    CView[CompetitionsView]
   end
-  Gate --> Session --> Home
-  Home --> Comp
-  Home --> Calc
-  JSON --> Filter --> Comp
-  Calc --> Scores --> Roadmap
+
+  subgraph calc [Calculator domain]
+    Form[CalculatorView form]
+    OCR[Tesseract.js + parseReport]
+    Score[lib/scoring.ts]
+    Road[lib/roadmap.ts]
+    UJSON[data/universities.json]
+  end
+
+  Gate --> Session
+  Session --> Tour
+  Locale --> Nav
+  Nav --> Home
+  Nav --> CompPage
+  Nav --> CalcPage
+  CJSON --> CLib --> CView
+  Links --> CView
+  CompPage --> CView
+  CalcPage --> Form
+  Form --> OCR
+  Form --> Score --> Road
+  UJSON --> Form
+  Locale --> Road
 ```
 
-| PRD stories | Implementation |
-|-------------|----------------|
-| US-A1, A2 | `/` wrapped by `EmailGate`; any email with `@` unlocks; persist `pilar_compass_email` in `localStorage` |
-| US-A3 | Documented in PRD/RFC only for MVP |
-| US-C1–C5 | `/competitions` + `data/competitions.json` + client filter/sort/refresh |
-| US-U1–U8 | `/calculator` form + pure functions in `lib/scoring.ts` + `lib/roadmap.ts` |
-| US-X1 | Stretch: optional later `lib/ocr.ts` + Tesseract.js — **not in critical path** |
+### Module boundaries
+
+| Module | Responsibility | Does not own |
+|--------|----------------|--------------|
+| `EmailGate` + `session.ts` | Soft unlock, persist email | Auth provider, server sessions |
+| `LocaleProvider` + dictionaries | EN/ID strings, roadmap locale | Competition proper nouns |
+| `competitions.ts` + JSON | Open/deadline logic, filter/sort | Scraping, CMS |
+| `links.ts` | Normalize `url` + `links[]` for UI buttons | Social API calls |
+| `scoring.ts` | Pure match math + weights | UI layout |
+| `roadmap.ts` | Deterministic next steps from gaps | LLM generation |
+| `ocr/parseReport.ts` + `runOcr.ts` | Photo → subject rows + confidence gate | Cloud Vision |
+| `OnboardingTour` | First-visit context for demo/judges | Product analytics |
 
 ---
 
-## 3. Stack (locked versions)
+## 4. PRD → implementation map
 
-| Layer | Choice | Version target | Why |
-|-------|--------|----------------|-----|
-| Framework | Next.js App Router | **15.x** (create-next-app latest stable) | Fast UI, easy Netlify, file routes map cleanly to modules |
-| Language | TypeScript | **5.x** (bundled with Next) | Safer scoring math + data types for judges/code score |
-| Styling | Tailwind CSS | **4.x** or **3.x** (whatever `create-next-app` scaffolds) | Speed; custom tokens for non-generic SPI look |
-| Fonts | `next/font` (e.g. Fraunces + DM Sans) | via Google fonts in Next | Expressive brand without extra assets |
-| Data | Static JSON | app-local | No DB; Netlify-friendly |
-| Scoring | Pure TS modules | — | Unit-testable; transparent weights |
-| OCR | Tesseract.js | stretch only | Explicitly out of must-ship |
-| Hosting | Netlify | Next runtime or static export | Workshop constraint; simpler than Railway for this MVP |
-| Package manager | npm | — | Default, fewest surprises on Netlify |
-
-### Rejected alternatives
-
-| Option | Rejected because |
-|--------|------------------|
-| Railway + custom API | Needless backend for curated JSON + client math |
-| Live scrape / search APIs | Unreliable in 3h; PRD non-goal |
-| Auth.js / OAuth | Soft gate is enough; PRD non-goal |
-| Real admissions datasets | No licensed data; honesty via heuristic + disclaimer |
+| PRD | Implementation | Status |
+|-----|----------------|--------|
+| US-A1, A2 | `EmailGate` + `localStorage` keys `pilar_compass_email` / `unlockedAt`; any email with `@` + `.` | Shipped |
+| US-A3 | Documented; future SPI domain check | Doc |
+| US-C1–C5 | `/competitions`, curated JSON, filters, open-only default, Refresh = `new Date()` | Shipped |
+| US-U1–U8 | `/calculator`, subjects 0–100, uni/country/region, tests, affordability, age, % + breakdown + roadmap + disclaimer | Shipped |
+| US-X1 | Browser Tesseract (`ind`+`eng`) → confidence check → replace subjects or keep manual | Shipped (promoted from stretch) |
+| Soft SPI positioning | Gate copy + demo email + first-visit tour | Shipped |
+| Bilingual (later in original PRD) | Full UI EN/ID toggle, persisted | Shipped |
 
 ---
 
-## 4. Information architecture & UI
+## 5. Stack (locked · as built)
+
+| Layer | Choice | Version | Why this choice |
+|-------|--------|---------|-----------------|
+| Framework | Next.js App Router | **16.2.x** | File routes map 1:1 to modules; excellent Vercel DX |
+| UI runtime | React | **19.x** | Client components for gate, OCR, locale |
+| Language | TypeScript | **5.x** | Safer scoring types; better judge “code” score |
+| Styling | Tailwind 4 + custom CSS tokens | **4.x** | Speed + SPI navy `#002147` / yellow `#fdc800` brand |
+| Font | Roboto via `next/font` | — | Matches SPI website chrome |
+| Data | Static JSON | app-local | Zero DB; deploy with no secrets |
+| Scoring | Pure TS (`scoring.ts`, `roadmap.ts`) | — | Unit-testable; transparent weights |
+| OCR | `tesseract.js` **5.x** in browser | — | No API key; photo never leaves device |
+| i18n | Lightweight dictionaries + context | — | No next-intl weight for workshop MVP |
+| Tests | Vitest | **4.x** | Fast pure-function tests for scoring + OCR parse |
+| Hosting | **Vercel** | — | Native Next; production URL `pilar-compass.vercel.app` |
+| Package manager | npm | — | Default, reproducible lockfile |
+
+### Rejected alternatives (tradeoffs)
+
+| Option | Rejected because | Cost if chosen |
+|--------|------------------|----------------|
+| Railway / custom API | Overkill for JSON + client math | Extra deploy surface, secrets, time |
+| Live scrape / search APIs | Unreliable in a 3h window; PRD non-goal | Flaky demos, ToS risk |
+| Auth.js / OAuth | Soft gate sufficient for SPI framing | Login friction for judges |
+| Cloud Vision OCR | Needs keys + cost; hybrid browser path chosen | Blocked offline demos |
+| next-intl / i18next | Heavy for ~200 UI strings | Bundle + config time |
+| Netlify (original plan) | Switched to Vercel for Next 16 path already used by builder | N/A — `netlify.toml` kept as optional fallback |
+| Real admissions datasets | No licensed data | Dishonest “AI predictor” vibe |
+
+---
+
+## 6. Information architecture & UX
 
 ### Routes
 
-| Route | Purpose |
-|-------|---------|
-| `/` | Brand landing (SPI + Pilar Compass), two CTAs; behind gate |
-| `/competitions` | Finder |
-| `/calculator` | Match calculator |
+| Route | Purpose | Gate |
+|-------|---------|------|
+| `/` | Brand landing — SPI + Pilar Compass, two CTAs | Yes |
+| `/competitions` | Finder with filters + announcement links | Yes |
+| `/calculator` | Match form, OCR upload, results | Yes |
 
 ### Soft gate
 
-1. If no `localStorage.pilar_compass_email`, show full-screen gate (email + Unlock).
-2. Validate: non-empty, contains `@`, basic format.
-3. On success, save email + `unlockedAt`, render app shell.
-4. Copy: “For Sekolah Pilar Indonesia students” + note that school email restriction comes later.
+1. If no stored email → full-screen gate (email + Unlock + demo email).
+2. Validate: trim, contains `@` and `.`, length ≥ 5, no spaces.
+3. Persist email; render `AppShell`.
+4. Copy positions product for SPI; prototype accepts any email (judges/demo).
+5. EN/ID toggle available **on the gate** so first-time visitors can switch before unlock.
 
-### Visual direction (brief)
+### First-visit onboarding
 
-- Brand-first landing: **Pilar Compass** as hero signal; SPI as school context.
-- Avoid generic purple/cream AI defaults; prefer deep teal + warm sand + sharp ink (SPI-adjacent, international-school calm).
-- Atmosphere: subtle grain/gradient, not flat white.
-- Motion: gate fade, list stagger, match % count-up (2–3 intentional motions).
-- No card soup in hero; cards only where interaction needs grouping (competition row / form sections OK).
+- 3-step modal after unlock (`pilar_compass_tour_seen`).
+- Explains product, competitions, calculator (+ EN/ID).
+- Replay via footer **Show intro** for judges who skipped.
+
+### Visual direction (as built)
+
+- Brand tokens from SPI site: navy `#002147`, yellow `#fdc800`, white.
+- Topbar + logo lockup + uppercase nav (school-site feel).
+- Motion: rise animations, list stagger, urgency pills — intentional, not noisy.
+- Competition cards use action buttons (★ announcement, → register, IG/FB) — not a dead text list.
 
 ---
 
-## 5. Data shapes
+## 7. Data shapes
 
-### Competition
+### Competition (curated)
 
 ```ts
-type CompetitionScope = "indonesia" | "international";
-type CompetitionField =
-  | "stem"
-  | "humanities"
-  | "business"
-  | "arts"
-  | "language"
-  | "multidisciplinary";
+type CompetitionLinkKind =
+  | "website" | "register" | "post"
+  | "instagram" | "facebook" | "youtube" | "info";
 
 type Competition = {
   id: string;
   name: string;
-  scope: CompetitionScope;
-  field: CompetitionField;
-  level: "junior" | "senior" | "both"; // maps to JH / SH
-  registrationDeadline: string; // ISO date YYYY-MM-DD
+  scope: "indonesia" | "international";
+  field:
+    | "stem" | "humanities" | "business"
+    | "arts" | "language" | "multidisciplinary";
+  level: "junior" | "senior" | "both";
+  registrationDeadline: string; // YYYY-MM-DD
   eventStart?: string;
   description: string;
-  url?: string;
+  url?: string;                 // fallback website
+  links?: CompetitionLink[];    // preferred: exact posts + register
   tags?: string[];
 };
 ```
 
-**Open logic:** `registrationDeadline >= today` (date-only, local).  
-**Refresh:** re-run filter/sort with `new Date()` (no fetch).  
-**Default sort:** ascending deadline among open items.
+**Open logic:** `registrationDeadline >= todayISO` (local date, no timezone scrape).  
+**Refresh:** recompute with `new Date()` — no network.  
+**Default sort:** ascending deadline among open items.  
+**Curation policy (as shipped):**
 
-### Calculator input / result
+- First-entry only (exclude OSN→OSP, IMO, IOI-style prerequisite pathways).
+- Prefer **announcement post URLs** over bare social profiles.
+- Drop past deadlines relative to workshop day (2026-08-01).
+
+### Calculator
 
 ```ts
 type Affordability =
-  | "can_afford"
-  | "middle_class"
-  | "need_scholarship"
-  | "low_budget";
+  | "can_afford" | "middle_class"
+  | "need_scholarship" | "low_budget";
 
 type SubjectScore = { name: string; score: number }; // 0–100
 
@@ -159,149 +231,199 @@ type CalculatorInput = {
   competitionAwards?: number;
 };
 
-type ScoreBreakdown = {
-  academics: number;    // 0–100 contribution weight applied later
-  tests: number;
-  financeFit: number;
-  timeline: number;
-  extras: number;
-};
-
 type ScoreResult = {
   averageScore: number;
-  matchPercent: number; // 0–100 clamped
+  matchPercent: number; // clamped 0–100
   breakdown: ScoreBreakdown;
   weights: Record<keyof ScoreBreakdown, number>;
-  roadmap: string[]; // 3–6 steps
+  roadmap: string[]; // 3–6 locale-aware steps
 };
 ```
 
-### Seed universities (curated suggestions + free text)
-
-Include SPI-familiar Indo options (e.g. UI, ITB, UGM, UPH, Unpad) and abroad examples (e.g. ANU, Melbourne, NUS) as datalist suggestions — user can always type any university.
+Universities: curated datalist (`universities.json`) + free text.
 
 ---
 
-## 6. Scoring heuristic (transparent, not official)
+## 8. Scoring heuristic (transparent)
 
-**Disclaimer (always shown):** illustrative planning tool for SPI students — not an admissions decision.
+**Disclaimer (always on result):** planning heuristic for SPI students — **not** an official admissions decision.
 
-### Weights (MVP)
+### Weights
 
 | Factor | Weight | Signal |
 |--------|--------|--------|
-| Academics | 0.45 | Average of subject scores 0–100 |
-| Standardized tests | 0.20 | Best available of TOEFL/SAT/IELTS normalized; if none, neutral 55 |
-| Finance fit | 0.15 | Mapping from affordability × region (abroad + low_budget lowers fit) |
-| Timeline | 0.10 | Age vs typical application window (15–18 sweet spot) |
-| Extras | 0.10 | Competition awards count (capped) + major filled bonus |
-
-`matchPercent = clamp(0, 100, Σ weight_i * factorScore_i)`
-
-### Roadmap rules (deterministic)
-
-Generate 3–6 bullets from gaps, e.g.:
-
-- Average &lt; 80 → raise specific weak subjects / study plan  
-- Abroad + missing English test → recommend IELTS/TOEFL timeline  
-- `need_scholarship` / `low_budget` → scholarship portals + competition medals  
-- Age ≤ 15 → multi-year competition ladder  
-- Age ≥ 17 → near-term application checklist  
-- Always include 1 competition suggestion tied to intended major / field when possible  
-
----
-
-## 7. Competitions module behavior
-
-1. Load static JSON at build/runtime.
-2. Controls: search, field, scope (Indo/International/All), open-only (default on), Refresh.
-3. Compute `isOpen` from deadline vs today.
-4. Sort open by nearest deadline; closed section optional (collapsed or filtered out when open-only).
-5. Honest banner: “Curated list for SPI workshop demo — not a live feed.”
-
-Target seed size: **25–40** entries, mix of Indo olympiads/science fairs and international contests SPI students could plausibly enter.
-
----
-
-## 8. Deploy (Netlify)
-
-1. GitHub repo for `student-compass`.
-2. Netlify site connected to repo; build `npm run build`, publish Next output (Netlify Next plugin or `@netlify/plugin-nextjs`).
-3. No required env secrets for MVP (email gate is client-only).
-4. Verify: public URL loads gate → competitions → calculator.
-
-**Fallback:** if Next runtime hiccups, switch to `output: 'export'` static hosting on Netlify — RFC allows this fallback without changing PRD stories.
-
----
-
-## 9. Phased timeline (ship slices)
-
-| Phase | Deliverable | PRD coverage | Verify |
-|-------|-------------|--------------|--------|
-| P0 | Next scaffold, design tokens, email gate, landing | US-A1, A2 | Gate unlock persists; brand visible |
-| P1 | `competitions.json` + `/competitions` UI | US-C1–C5 | Filters + sort + refresh work |
-| P2 | `/calculator` + scoring + roadmap + disclaimer | US-U1–U8 | Unit tests for average + match clamp; UI result |
-| P3 | Polish, `llms.txt`, screenshots | Submit pack | Mobile layout OK |
-| P4 | Netlify deploy + GitHub | Deploy stories | Public URL |
-| P5 | OCR (stretch) | US-X1 | Only if P0–P4 green |
-
-Equal module priority ⇒ finish **thin P1 and thin P2** before deep polish on either.
-
----
-
-## 10. Testing & review
-
-| Check | How |
-|-------|-----|
-| Scoring math | Vitest or Node test on `lib/scoring.ts` (average, weights, clamp) |
-| Lint / types | `npm run lint`, `tsc --noEmit` |
-| Stories | Manual browser pass against PRD checklist |
-| Review | AI pass: KISS, DRY, no secrets, PRD alignment; then human taste pass |
-
----
-
-## 11. Repo layout (target)
+| Academics | **0.45** | Mean of subject scores 0–100 |
+| Standardized tests | **0.20** | Normalized TOEFL/SAT/IELTS average; if none → neutral **55** |
+| Finance fit | **0.15** | Affordability base; abroad + tight budget lowers score |
+| Timeline | **0.10** | Age vs application window (15–18 sweet spot) |
+| Extras | **0.10** | Awards count (capped) + intended-major bonus |
 
 ```
-student-compass/
+matchPercent = round(clamp(0, 100, Σ weight_i × factorScore_i))
+```
+
+### Roadmap (deterministic)
+
+Built in `roadmap.ts` from the same input + locale:
+
+| Condition | Action |
+|-----------|--------|
+| Average &lt; 80 | Raise weakest subjects |
+| Abroad + no English test | Book IELTS/TOEFL in 8–12 weeks |
+| Need scholarship / low budget | Scholarship + competition evidence |
+| Age ≤ 15 | Multi-year competition ladder |
+| Age ≥ 17 | Near-term application checklist |
+| Major filled | Align competitions/reading to major × university |
+| Match &lt; 55 | Add parallel Indonesia university option |
+
+Cap at 6 steps. Switching EN/ID re-renders roadmap copy for the same inputs.
+
+---
+
+## 9. OCR design (hybrid, no cloud)
+
+| Step | Behavior |
+|------|----------|
+| Input | JPG / PNG / WEBP; preview via object URL |
+| Engine | Tesseract.js worker, languages `ind` + `eng` |
+| Parse | Line patterns → `{ name, score }`; skip headers/totals |
+| Confidence | Mean word confidence; success if ≥2 subjects and confidence gate passes |
+| Success | **Replace** subject list (still editable) |
+| Failure | **Do not** replace; prompt manual entry |
+| Privacy | File processed in-browser only; never uploaded to our servers |
+
+This satisfies US-X1 without API keys — critical for workshop demos on shared Wi‑Fi.
+
+---
+
+## 10. Internationalization
+
+| Decision | Detail |
+|----------|--------|
+| Approach | Flat `en` / `id` dictionaries + `translate(locale, key, vars)` |
+| Persistence | `localStorage` key `pilar-locale` |
+| Coverage | Gate, shell, home, competitions chrome, calculator, OCR status, roadmap, tour |
+| Untranslated | Competition titles, university names, external link labels (proper nouns / URLs) |
+| Descriptions | Competition blurbs keyed as `comp.{id}` in both locales |
+
+---
+
+## 11. Competitions module behavior
+
+1. Load `data/competitions.json` at build/import time.
+2. Controls: search, field, scope, open-only (default **on**), Refresh.
+3. Each card: deadline urgency pill, meta, localized description, link buttons via `getCompetitionLinks`.
+4. Empty state with Reset filters.
+5. Stat pills: open count + due-in-7-days count.
+
+---
+
+## 12. Security & privacy
+
+| Topic | Decision |
+|-------|----------|
+| Auth | Soft gate only — not a security boundary |
+| Secrets | None required for MVP runtime |
+| PII | Email stored in `localStorage` on device only |
+| OCR images | Stay on device; no upload endpoint |
+| XSS | React escaping; no `dangerouslySetInnerHTML` for user scores |
+| External links | `rel="noopener noreferrer"` on competition URLs |
+
+---
+
+## 13. Deploy
+
+| Item | Value |
+|------|--------|
+| Host | Vercel project `pilar-compass` |
+| Production URL | https://pilar-compass.vercel.app |
+| Build | `npm run build` (Next default) |
+| Env secrets | None for core MVP |
+| GitHub | https://github.com/JustHackr/pilar-compass |
+| Verify path | Gate → tour → competitions → calculator → OCR optional → match % |
+
+**Fallback:** static `output: 'export'` remains viable if edge runtime ever blocks; not required today.
+
+---
+
+## 14. Testing strategy
+
+| Layer | What | Tool |
+|-------|------|------|
+| Unit | `averageScores`, clamp, finance abroad penalty, match bounds | Vitest → `scoring.test.ts` |
+| Unit | OCR line parse (ID/EN), header rejection, confidence gate | Vitest → `parseReport.test.ts` |
+| Typecheck | `next build` / tsc | CI-equivalent local |
+| Manual | PRD checklist + mobile layout + EN/ID flip + tour replay | Browser |
+
+---
+
+## 15. Repo layout (as built)
+
+```
+pilar-compass/
   docs/PRD.md
   docs/RFC.md
   llms.txt
   data/competitions.json
   data/universities.json
-  src/app/layout.tsx
-  src/app/page.tsx
-  src/app/competitions/page.tsx
-  src/app/calculator/page.tsx
-  src/components/EmailGate.tsx
-  src/components/...
-  src/lib/scoring.ts
-  src/lib/roadmap.ts
-  src/lib/competitions.ts
-  .cursor/skills/   # already installed
+  src/app/{page,layout,globals.css,competitions,calculator}/
+  src/components/
+    EmailGate.tsx
+    AppShell.tsx
+    OnboardingTour.tsx
+    CompetitionsView.tsx
+    CalculatorView.tsx
+    ClientApp.tsx
+  src/lib/
+    session.ts
+    tour.ts
+    competitions.ts
+    links.ts
+    scoring.ts
+    roadmap.ts
+    i18n/{dictionaries.ts,LocaleContext.tsx,LocaleToggle.tsx}
+    ocr/{parseReport.ts,runOcr.ts}
+  src/types/index.ts
 ```
 
 ---
 
-## 12. Risks
+## 16. Phased delivery (what we actually ran)
+
+| Phase | Deliverable | Verify |
+|-------|-------------|--------|
+| P0 | Scaffold, SPI tokens, email gate, landing | Unlock persists; brand visible |
+| P1 | Competitions JSON + filters + announcement links | Open-only sort + Refresh |
+| P2 | Calculator + scoring + roadmap + disclaimer | Vitest green; % + breakdown |
+| P3 | OCR + EN/ID + onboarding tour | Hybrid OCR + locale flip |
+| P4 | Vercel prod + GitHub `JustHackr/pilar-compass` | Public URL |
+
+Equal module priority was honored by shipping thin P1 and P2 before OCR/i18n polish.
+
+---
+
+## 17. Risks & mitigations
 
 | Risk | Mitigation |
 |------|------------|
-| Two equal modules overrun | Thin verticals first; OCR already stretch |
-| Heuristic distrust | Breakdown + disclaimer + honest copy |
-| Netlify/Next config time sink | Prefer default Netlify Next path; static export fallback |
-| Soft gate with any email | Prototype honesty in PRD; SPI domain later |
+| Two modules overrun clock | Thin verticals first; OCR after core calculator |
+| Match % looks like fake admissions AI | Visible weights + strong disclaimer |
+| Curated list distrust | Exact announcement posts; first-entry policy; open deadlines only |
+| OCR misreads rapor | Confidence gate; never overwrite on fail; manual edit always wins |
+| Soft gate with any email | Prototype honesty in copy + demo path for judges |
+| Locale drift | Single dictionary source; roadmap regenerated on locale change |
 
 ---
 
-## 13. Open items (none blocking)
+## 18. Open items (non-blocking follow-ups)
 
-- Exact Netlify adapter resolved at deploy time (runtime vs static export).
-- Final teal/sand token values chosen during scaffold.
-- OCR libraries not installed unless P5 starts.
+- Restrict unlock to SPI school email format.
+- Optional cloud OCR fallback behind a feature flag (not needed for MVP).
+- Teacher-facing competition admin.
+- Deeper competition dataset growth beyond workshop seed.
 
 ---
 
-## 14. Decision record
+## 19. Decision record
 
-**We will build Pilar Compass as a Netlify-hosted Next.js + TypeScript + Tailwind client app with curated competition data and a transparent weighted match calculator, gated by any-email unlock for SPI positioning — matching the locked PRD without live data or real auth.**
+**We build Pilar Compass as a Vercel-hosted Next.js 16 + TypeScript + Tailwind client app:** curated first-entry competition data with announcement links, a transparent weighted university match calculator, browser OCR with confidence gating, EN/ID locale, and a soft any-email gate for SPI positioning — matching the locked PRD without a backend, live scrape, or real auth.
