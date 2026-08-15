@@ -14,7 +14,10 @@ export default function HomePage() {
           <h1 className="brand-title">Pilar Compass</h1>
           <p className="lede">{t("home.lede")}</p>
           <div className="cta-row">
-            <Link href="/competitions" className="btn-primary">
+            <Link href="/tka" className="btn-primary">
+              {t("home.cta.tka")}
+            </Link>
+            <Link href="/competitions" className="btn-secondary">
               {t("home.cta.comps")}
             </Link>
             <Link href="/calculator" className="btn-secondary">

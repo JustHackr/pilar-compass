@@ -33,6 +33,7 @@ export function AppShell({ email, onSignOut, children }: Props) {
 
   const links = [
     { href: "/", label: t("nav.home") },
+    { href: "/tka", label: t("nav.tka") },
     { href: "/competitions", label: t("nav.competitions") },
     { href: "/calculator", label: t("nav.calculator") },
   ];
@@ -80,7 +81,15 @@ export function AppShell({ email, onSignOut, children }: Props) {
               <Link
                 key={l.href}
                 href={l.href}
-                className={pathname === l.href ? "nav-link active" : "nav-link"}
+                className={
+                  l.href === "/"
+                    ? pathname === "/"
+                      ? "nav-link active"
+                      : "nav-link"
+                    : pathname === l.href || pathname.startsWith(`${l.href}/`)
+                      ? "nav-link active"
+                      : "nav-link"
+                }
               >
                 {l.label}
               </Link>

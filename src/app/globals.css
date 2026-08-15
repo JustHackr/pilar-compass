@@ -1196,3 +1196,290 @@ select {
     display: none;
   }
 }
+
+/* ——— TKA practice ——— */
+.tka-page h1 {
+  color: var(--navy);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 8px 0 12px;
+}
+
+.tka-page .lede {
+  max-width: 640px;
+}
+
+.tka-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+
+.tka-stat {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px 24px;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tka-stat strong {
+  font-size: 28px;
+  color: var(--navy);
+}
+
+.tka-flame {
+  font-size: 24px;
+}
+
+.tka-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 24px;
+}
+
+.tka-grade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 16px 0 32px;
+}
+
+.tka-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background: var(--white);
+  min-height: 120px;
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.tka-card:hover {
+  border-color: var(--yellow);
+  box-shadow: 0 8px 20px rgba(0, 33, 71, 0.08);
+}
+
+.tka-card:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+.tka-card h2,
+.tka-card h3 {
+  margin: 0 0 8px;
+  color: var(--navy);
+}
+
+.tka-card-locked {
+  opacity: 0.62;
+  cursor: not-allowed;
+  background: var(--paper-2);
+}
+
+.tka-card-locked:hover {
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.tka-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 480px;
+  margin: 16px 0;
+}
+
+.tka-onboard {
+  max-width: 720px;
+}
+
+.tka-otp-reveal {
+  background: #fff8d4;
+  border: 1px solid var(--yellow);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.tka-fieldset {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin: 8px 0;
+}
+
+.tka-pilihan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.tka-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 0;
+}
+
+.tka-hint-line {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.tka-section {
+  color: var(--navy);
+  margin: 32px 0 12px;
+  font-size: 18px;
+}
+
+.tka-skill-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tka-skill {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.tka-skill h3 {
+  margin: 0 0 4px;
+  color: var(--navy);
+}
+
+.tka-status {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.tka-lesson-bar {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+
+.tka-stem {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--heading);
+}
+
+.tka-source {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tka-choices,
+.tka-pgk {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tka-choice {
+  width: 100%;
+  text-align: left;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tka-choice span {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.tka-choice:hover:not(:disabled) {
+  border-color: var(--yellow);
+}
+
+.tka-choice:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+.tka-choice-on {
+  border-color: var(--navy);
+  background: #eef3f8;
+}
+
+.tka-choice:disabled {
+  cursor: not-allowed;
+}
+
+.tka-hint-box {
+  background: var(--paper-2);
+  border-left: 4px solid var(--yellow);
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+
+.tka-ok {
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.tka-material {
+  margin: 8px 0 16px;
+}
+
+.tka-material summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--navy);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.tka-board {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 32px;
+}
+
+.tka-board li {
+  display: grid;
+  grid-template-columns: 48px 1fr 64px 72px;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tka-rank {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.tka-top {
+  background: #fff8d4;
+}
