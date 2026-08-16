@@ -55,6 +55,8 @@ export default function TkaGradePage() {
         ))}
       </div>
 
+      {cat.pilihan.length > 0 ? (
+        <>
       <h2 className="tka-section">{t("tka.pilihan")}</h2>
       <div className="tka-grade-grid">
         {pilihan.map((s) => {
@@ -74,20 +76,22 @@ export default function TkaGradePage() {
           );
         })}
       </div>
+        </>
+      ) : null}
 
-      {!pilihan.some((s) => s.id === "kimia") ? (
+      {grade === "12" && pilihan.some((s) => !s.playable) ? (
         <p className="tka-hint-line">
           {locale === "id" ? (
             <>
-              Kimia sudah bisa dilatih. Ubah dua mapel pilihan di{" "}
-              <Link href="/tka/onboarding">pengaturan jalur</Link> jika Kimia
-              belum terpilih.
+              Delapan mapel pilihan sudah bisa dilatih (kecuali bahasa asing dan
+              Informatika). Ubah dua pilihan di{" "}
+              <Link href="/tka/onboarding">pengaturan jalur</Link>.
             </>
           ) : (
             <>
-              Chemistry practice is ready. Change your two electives in{" "}
-              <Link href="/tka/onboarding">path setup</Link> if Kimia is not
-              selected.
+              Eight electives are playable (except foreign languages and
+              Informatics). Change your two picks in{" "}
+              <Link href="/tka/onboarding">path setup</Link>.
             </>
           )}
         </p>

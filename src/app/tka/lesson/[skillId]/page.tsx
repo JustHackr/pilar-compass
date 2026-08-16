@@ -30,7 +30,10 @@ export default function TkaLessonPage() {
 
   const items = useMemo(() => {
     if (!skill) return [];
-    return pickLessonItems(skill.id, questionsForSubject(skill.subjectId));
+    return pickLessonItems(
+      skill.id,
+      questionsForSubject(skill.subjectId, skill.track ?? "12"),
+    );
   }, [skill]);
 
   const byId = useMemo(() => {
@@ -146,7 +149,7 @@ export default function TkaLessonPage() {
           >
             {t("tka.another")}
           </button>
-          <Link className="btn-secondary" href={`/tka/grade/12/${skill.subjectId}`}>
+          <Link className="btn-secondary" href={`/tka/grade/${skill.track ?? "12"}/${skill.subjectId}`}>
             {t("tka.backSkills")}
           </Link>
         </div>

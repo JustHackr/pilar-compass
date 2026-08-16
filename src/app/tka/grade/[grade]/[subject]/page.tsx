@@ -33,8 +33,8 @@ export default function TkaSubjectPage() {
     );
   }
 
-  const skills = skillsForSubject(subjectId);
-  const packs = TRYOUT_PACKS.filter((p) => p.subjectId === subjectId);
+  const skills = skillsForSubject(subjectId, grade);
+  const packs = TRYOUT_PACKS.filter((p) => p.subjectId === subjectId && p.track === grade);
 
   return (
     <div className="page-wrap tka-page">

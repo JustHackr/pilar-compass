@@ -40,7 +40,9 @@ export default function TkaHubPage() {
       </div>
 
       <div className="tka-actions">
-        {continueSkill && profile?.tkaTrack === "12" ? (
+        {continueSkill &&
+        profile?.tkaTrack &&
+        (continueSkill.track ?? "12") === profile.tkaTrack ? (
           <Link className="btn-primary" href={`/tka/lesson/${continueSkill.id}`}>
             {t("tka.continue")}
           </Link>
@@ -70,8 +72,16 @@ export default function TkaHubPage() {
               ) : (
                 <p>
                   {locale === "id"
-                    ? "Matematika wajib dan Kimia pilihan terbuka"
-                    : "Compulsory math and elective Chemistry are open"}
+                    ? g === "6"
+                      ? "Matematika dan Bahasa Indonesia SD"
+                      : g === "9"
+                        ? "Matematika dan Bahasa Indonesia SMP"
+                        : "Wajib Matematika, BI, Inggris, plus 8 mapel pilihan"
+                    : g === "6"
+                      ? "SD math and Indonesian"
+                      : g === "9"
+                        ? "SMP math and Indonesian"
+                        : "Math, Indonesian, English, plus 8 electives"}
                 </p>
               )}
             </Link>

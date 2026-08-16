@@ -105,7 +105,7 @@ export default function TkaTryoutPage() {
     return (
       <div className="page-wrap tka-page">
         <p>{t("tka.comingSoon")}</p>
-        <Link href={`/tka/grade/12/${pack?.subjectId ?? "kimia"}`}>{t("tka.backSkills")}</Link>
+        <Link href={`/tka/grade/${pack?.track ?? "12"}/${pack?.subjectId ?? "kimia"}`}>{t("tka.backSkills")}</Link>
       </div>
     );
   }
@@ -163,7 +163,7 @@ export default function TkaTryoutPage() {
             </li>
           ))}
         </ul>
-        <Link className="btn-primary" href={`/tka/grade/12/${pack.subjectId}`}>
+        <Link className="btn-primary" href={`/tka/grade/${pack.track}/${pack.subjectId}`}>
           {t("tka.backSkills")}
         </Link>
       </div>

@@ -17,28 +17,50 @@ export type GradeCatalog = {
   pilihan: TkaSubject[];
 };
 
+export const GRADE6_WAJIB: TkaSubject[] = [
+  { id: "matematika", group: "wajib", labelEn: "Mathematics", labelId: "Matematika", playable: true },
+  {
+    id: "bahasa_indonesia",
+    group: "wajib",
+    labelEn: "Indonesian",
+    labelId: "Bahasa Indonesia",
+    playable: true,
+  },
+];
+
+export const GRADE9_WAJIB: TkaSubject[] = [
+  { id: "matematika", group: "wajib", labelEn: "Mathematics", labelId: "Matematika", playable: true },
+  {
+    id: "bahasa_indonesia",
+    group: "wajib",
+    labelEn: "Indonesian",
+    labelId: "Bahasa Indonesia",
+    playable: true,
+  },
+];
+
 export const PILIHAN_SUBJECTS: TkaSubject[] = [
-  { id: "fisika", group: "pilihan", labelEn: "Physics", labelId: "Fisika", playable: false },
+  { id: "fisika", group: "pilihan", labelEn: "Physics", labelId: "Fisika", playable: true },
   { id: "kimia", group: "pilihan", labelEn: "Chemistry", labelId: "Kimia", playable: true },
-  { id: "biologi", group: "pilihan", labelEn: "Biology", labelId: "Biologi", playable: false },
+  { id: "biologi", group: "pilihan", labelEn: "Biology", labelId: "Biologi", playable: true },
   {
     id: "matematika_lanjut",
     group: "pilihan",
     labelEn: "Advanced Mathematics",
     labelId: "Matematika Tingkat Lanjut",
-    playable: false,
+    playable: true,
   },
-  { id: "ekonomi", group: "pilihan", labelEn: "Economics", labelId: "Ekonomi", playable: false },
-  { id: "sosiologi", group: "pilihan", labelEn: "Sociology", labelId: "Sosiologi", playable: false },
-  { id: "geografi", group: "pilihan", labelEn: "Geography", labelId: "Geografi", playable: false },
-  { id: "sejarah", group: "pilihan", labelEn: "History", labelId: "Sejarah", playable: false },
+  { id: "ekonomi", group: "pilihan", labelEn: "Economics", labelId: "Ekonomi", playable: true },
+  { id: "sosiologi", group: "pilihan", labelEn: "Sociology", labelId: "Sosiologi", playable: true },
+  { id: "geografi", group: "pilihan", labelEn: "Geography", labelId: "Geografi", playable: true },
+  { id: "sejarah", group: "pilihan", labelEn: "History", labelId: "Sejarah", playable: true },
   { id: "antropologi", group: "pilihan", labelEn: "Anthropology", labelId: "Antropologi", playable: false },
   {
     id: "ppkn",
     group: "pilihan",
     labelEn: "Pancasila and Civics (PPKn)",
     labelId: "Pendidikan Pancasila dan Kewarganegaraan (PPKn)",
-    playable: false,
+    playable: true,
   },
   {
     id: "bahasa_indonesia_lanjut",
@@ -70,14 +92,14 @@ export const GRADE12_WAJIB: TkaSubject[] = [
     group: "wajib",
     labelEn: "Indonesian",
     labelId: "Bahasa Indonesia",
-    playable: false,
+    playable: true,
   },
-  { id: "bahasa_inggris", group: "wajib", labelEn: "English", labelId: "Bahasa Inggris", playable: false },
+  { id: "bahasa_inggris", group: "wajib", labelEn: "English", labelId: "Bahasa Inggris", playable: true },
 ];
 
 export const CATALOG: Record<TkaTrack, GradeCatalog> = {
-  "6": { track: "6", playable: false, wajib: [], pilihan: [] },
-  "9": { track: "9", playable: false, wajib: [], pilihan: [] },
+  "6": { track: "6", playable: true, wajib: GRADE6_WAJIB, pilihan: [] },
+  "9": { track: "9", playable: true, wajib: GRADE9_WAJIB, pilihan: [] },
   "12": {
     track: "12",
     playable: true,
@@ -87,12 +109,15 @@ export const CATALOG: Record<TkaTrack, GradeCatalog> = {
 };
 
 export function subjectById(id: string): TkaSubject | undefined {
-  return [...GRADE12_WAJIB, ...PILIHAN_SUBJECTS].find((s) => s.id === id);
+  return [...GRADE6_WAJIB, ...GRADE9_WAJIB, ...GRADE12_WAJIB, ...PILIHAN_SUBJECTS].find(
+    (s) => s.id === id,
+  );
 }
 
 export function isPlayableSubject(track: TkaTrack, subjectId: string): boolean {
-  if (track !== "12") return false;
-  const subject = subjectById(subjectId);
+  const cat = CATALOG[track];
+  if (!cat.playable) return false;
+  const subject = [...cat.wajib, ...cat.pilihan].find((s) => s.id === subjectId);
   return Boolean(subject?.playable);
 }
 
