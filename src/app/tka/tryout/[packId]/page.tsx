@@ -17,7 +17,7 @@ type Review = {
 };
 
 export default function TkaTryoutPage() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { reload } = useTkaMe();
   const params = useParams<{ packId: string }>();
   const pack = tryoutById(params.packId);
@@ -105,7 +105,7 @@ export default function TkaTryoutPage() {
     return (
       <div className="page-wrap tka-page">
         <p>{t("tka.comingSoon")}</p>
-        <Link href="/tka/grade/12/matematika">{t("tka.backSkills")}</Link>
+        <Link href={`/tka/grade/12/${pack?.subjectId ?? "kimia"}`}>{t("tka.backSkills")}</Link>
       </div>
     );
   }
@@ -113,9 +113,14 @@ export default function TkaTryoutPage() {
   if (!started) {
     return (
       <div className="page-wrap tka-page">
-        <h1>{pack.titleId}</h1>
+        <h1>{locale === "id" ? pack.titleId : pack.titleEn}</h1>
         <p className="lede">
-          {questions.length} soal · {t("tka.official")}
+          {questions.length} soal ·{" "}
+          {pack.kind === "official"
+            ? t("tka.official")
+            : pack.kind === "latihan"
+              ? t("tka.latihan")
+              : t("tka.prediction")}
         </p>
         <label className="tka-check">
           <input
@@ -158,7 +163,7 @@ export default function TkaTryoutPage() {
             </li>
           ))}
         </ul>
-        <Link className="btn-primary" href="/tka/grade/12/matematika">
+        <Link className="btn-primary" href={`/tka/grade/12/${pack.subjectId}`}>
           {t("tka.backSkills")}
         </Link>
       </div>

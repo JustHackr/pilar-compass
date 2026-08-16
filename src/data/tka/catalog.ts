@@ -19,7 +19,7 @@ export type GradeCatalog = {
 
 export const PILIHAN_SUBJECTS: TkaSubject[] = [
   { id: "fisika", group: "pilihan", labelEn: "Physics", labelId: "Fisika", playable: false },
-  { id: "kimia", group: "pilihan", labelEn: "Chemistry", labelId: "Kimia", playable: false },
+  { id: "kimia", group: "pilihan", labelEn: "Chemistry", labelId: "Kimia", playable: true },
   { id: "biologi", group: "pilihan", labelEn: "Biology", labelId: "Biologi", playable: false },
   {
     id: "matematika_lanjut",
@@ -92,7 +92,8 @@ export function subjectById(id: string): TkaSubject | undefined {
 
 export function isPlayableSubject(track: TkaTrack, subjectId: string): boolean {
   if (track !== "12") return false;
-  return GRADE12_WAJIB.some((s) => s.id === subjectId && s.playable);
+  const subject = subjectById(subjectId);
+  return Boolean(subject?.playable);
 }
 
 export const PILIHAN_IDS = PILIHAN_SUBJECTS.map((s) => s.id);

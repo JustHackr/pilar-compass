@@ -146,7 +146,7 @@ export default function TkaLessonPage() {
           >
             {t("tka.another")}
           </button>
-          <Link className="btn-secondary" href="/tka/grade/12/matematika">
+          <Link className="btn-secondary" href={`/tka/grade/12/${skill.subjectId}`}>
             {t("tka.backSkills")}
           </Link>
         </div>

@@ -57,13 +57,41 @@ export default function TkaGradePage() {
 
       <h2 className="tka-section">{t("tka.pilihan")}</h2>
       <div className="tka-grade-grid">
-        {pilihan.map((s) => (
-          <div key={s.id} className="tka-card tka-card-locked">
-            <h3>{locale === "id" ? s.labelId : s.labelEn}</h3>
-            <p>{t("tka.comingSoon")}</p>
-          </div>
-        ))}
+        {pilihan.map((s) => {
+          const open = s.playable;
+          return (
+            <Link
+              key={s.id}
+              href={open ? `/tka/grade/${grade}/${s.id}` : "#"}
+              className={open ? "tka-card" : "tka-card tka-card-locked"}
+              onClick={(e) => {
+                if (!open) e.preventDefault();
+              }}
+            >
+              <h3>{locale === "id" ? s.labelId : s.labelEn}</h3>
+              <p>{open ? t("tka.open") : t("tka.comingSoon")}</p>
+            </Link>
+          );
+        })}
       </div>
+
+      {!pilihan.some((s) => s.id === "kimia") ? (
+        <p className="tka-hint-line">
+          {locale === "id" ? (
+            <>
+              Kimia sudah bisa dilatih. Ubah dua mapel pilihan di{" "}
+              <Link href="/tka/onboarding">pengaturan jalur</Link> jika Kimia
+              belum terpilih.
+            </>
+          ) : (
+            <>
+              Chemistry practice is ready. Change your two electives in{" "}
+              <Link href="/tka/onboarding">path setup</Link> if Kimia is not
+              selected.
+            </>
+          )}
+        </p>
+      ) : null}
     </div>
   );
 }

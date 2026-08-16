@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CATALOG } from "@/data/tka/catalog";
-import { GRADE12_MATH_SKILLS } from "@/data/tka/skills";
+import { ALL_TKA_SKILLS } from "@/data/tka/skills";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { streakBadges } from "@/lib/tka/streak";
 import { useTkaMe } from "@/components/tka/TkaGate";
@@ -12,7 +12,7 @@ export default function TkaHubPage() {
   const { me } = useTkaMe();
   const profile = me.profile;
   const badges = streakBadges(profile?.streakCount ?? 0);
-  const continueSkill = GRADE12_MATH_SKILLS.find((s) =>
+  const continueSkill = ALL_TKA_SKILLS.find((s) =>
     me.mastery.some((m) => m.skillId === s.id && m.status === "learning"),
   );
 
@@ -69,7 +69,9 @@ export default function TkaHubPage() {
                 <p>{t("tka.comingSoon")}</p>
               ) : (
                 <p>
-                  {locale === "id" ? "Matematika wajib terbuka" : "Compulsory math is open"}
+                  {locale === "id"
+                    ? "Matematika wajib dan Kimia pilihan terbuka"
+                    : "Compulsory math and elective Chemistry are open"}
                 </p>
               )}
             </Link>

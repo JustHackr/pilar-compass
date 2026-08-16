@@ -1,10 +1,10 @@
-export type TryoutKind = "official" | "prediction";
+export type TryoutKind = "official" | "prediction" | "latihan";
 
 export type TryoutPack = {
   id: string;
   kind: TryoutKind;
   track: "12";
-  subjectId: "matematika";
+  subjectId: string;
   titleEn: string;
   titleId: string;
   questionIds: string[];
@@ -44,6 +44,55 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     titleId: "Paket prediksi (segera hadir)",
     questionIds: [],
     comingSoon: true,
+  },
+  {
+    id: "g12-kimia-official-2025",
+    kind: "official",
+    track: "12",
+    subjectId: "kimia",
+    titleEn: "Official TKA Chemistry 2025",
+    titleId: "TKA Kimia Asli 2025",
+    questionIds: [
+      "k12-o-01",
+      "k12-o-03",
+      "k12-o-04",
+      "k12-o-05",
+      "k12-o-09",
+      "k12-o-10",
+      "k12-o-11",
+      "k12-o-12",
+      "k12-o-14",
+      "k12-o-15",
+      "k12-o-18",
+      "k12-o-19",
+      "k12-o-21",
+      "k12-o-24",
+    ],
+  },
+  {
+    id: "g12-kimia-latihan-2025",
+    kind: "latihan",
+    track: "12",
+    subjectId: "kimia",
+    titleEn: "Chemistry practice set 2025",
+    titleId: "Set latihan TKA Kimia 2025",
+    questionIds: [
+      "k12-l-01",
+      "k12-l-02",
+      "k12-l-03",
+      "k12-l-04",
+      "k12-l-05",
+      "k12-l-06",
+      "k12-l-07",
+      "k12-l-08",
+      "k12-l-10",
+      "k12-l-12",
+      "k12-l-15",
+      "k12-l-16",
+      "k12-l-17",
+      "k12-l-19",
+      "k12-l-20",
+    ],
   },
 ];
 

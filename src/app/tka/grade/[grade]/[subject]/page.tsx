@@ -18,8 +18,11 @@ export default function TkaSubjectPage() {
   if (!isTkaTrack(grade)) return null;
   const subject = subjectById(subjectId);
   const playable = isPlayableSubject(grade, subjectId);
+  const isPilihan = subject?.group === "pilihan";
+  const allowedPilihan =
+    !isPilihan || (me.profile?.pilihanIds ?? []).includes(subjectId);
 
-  if (!subject || !playable || me.profile?.tkaTrack !== grade) {
+  if (!subject || !playable || me.profile?.tkaTrack !== grade || !allowedPilihan) {
     return (
       <div className="page-wrap tka-page">
         <h1>{t("tka.lockedSubject")}</h1>
@@ -62,7 +65,11 @@ export default function TkaSubjectPage() {
         {packs.map((p) => (
           <div key={p.id} className={p.comingSoon ? "tka-card tka-card-locked" : "tka-card"}>
             <p className="eyebrow">
-              {p.kind === "official" ? t("tka.official") : t("tka.prediction")}
+              {p.kind === "official"
+                ? t("tka.official")
+                : p.kind === "latihan"
+                  ? t("tka.latihan")
+                  : t("tka.prediction")}
             </p>
             <h3>{locale === "id" ? p.titleId : p.titleEn}</h3>
             {p.comingSoon ? (
