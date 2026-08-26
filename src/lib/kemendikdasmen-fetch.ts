@@ -4,11 +4,17 @@ import type { TLSSocket } from "node:tls";
 
 export const PUSPRESNAS_HOST = "pusatprestasinasional.kemendikdasmen.go.id";
 
+type Name = string | string[] | undefined;
+
 type PeerCert = {
-  subject?: { CN?: string };
-  issuer?: { O?: string; CN?: string };
+  subject?: { CN?: Name };
+  issuer?: { O?: Name; CN?: Name };
   subjectaltname?: string;
 };
+
+function flattenName(value: Name): string {
+  return Array.isArray(value) ? value.join(" ") : value ?? "";
+}
 
 /**
  * Kemendikdasmen omits the DigiCert intermediate in TLS, so Node cannot
@@ -18,11 +24,11 @@ export function assertPuspresnasPeer(hostname: string, cert: PeerCert): void {
   if (hostname !== PUSPRESNAS_HOST) {
     throw new Error(`Unexpected host ${hostname}`);
   }
-  const names = `${cert.subject?.CN ?? ""} ${cert.subjectaltname ?? ""}`.toLowerCase();
+  const names = `${flattenName(cert.subject?.CN)} ${cert.subjectaltname ?? ""}`.toLowerCase();
   if (!names.includes("kemendikdasmen.go.id")) {
     throw new Error("Unexpected certificate subject");
   }
-  const issuer = `${cert.issuer?.O ?? ""} ${cert.issuer?.CN ?? ""}`;
+  const issuer = `${flattenName(cert.issuer?.O)} ${flattenName(cert.issuer?.CN)}`;
   if (!/DigiCert/i.test(issuer)) {
     throw new Error("Unexpected certificate issuer");
   }
