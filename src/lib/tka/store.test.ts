@@ -18,7 +18,8 @@ describe("tka store", () => {
     const db = await readStore();
     expect(Object.keys(db.profiles).length).toBeGreaterThan(SPI_CLASSES.length * 2);
     expect(db.profiles[ADMIN_EMAIL]?.kelas).toBe("ADMIN");
-    expect(db.lessons.length).toBeGreaterThan(0);
+    expect(db.daily).toEqual([]);
+    expect(db.lessons).toEqual([]);
     expect(db.profiles["justin.rizki@pilar.sch.id"]).toBeUndefined();
   });
 
