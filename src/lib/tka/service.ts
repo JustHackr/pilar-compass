@@ -2,27 +2,25 @@ import { randomUUID } from "node:crypto";
 import { questionById, questionsForSubject } from "@/data/tka/bank";
 import { tryoutById } from "@/data/tka/tryouts";
 import { isPilihanId } from "@/data/tka/catalog";
+import { isAdminEmail, matchSpiClass } from "@/data/spi-classes";
 import { isTkaTrack, normalizeKelas, type TkaTrack } from "./grade";
 import { gradeItem, monthlyActivityScore, type LessonCheck } from "./scoring";
 import { applyQualifyingActivity } from "./streak";
 import { mutateStore, readStore } from "./store";
-import { consumeOtpCookie, hashOtp, makeOtp, setOtpCookie } from "./session";
-import { masteryKey, type DailyActivity, type TkaProfile } from "./types";
+import { masteryKey, type ActivityEvent, type DailyActivity, type TkaProfile } from "./types";
+import { pushEvent } from "./admin";
 import { wibDateStr } from "./wib";
 
 export function emailKey(email: string): string {
   return email.toLowerCase().trim();
 }
 
-export async function issueOtp(email: string): Promise<string> {
-  const code = makeOtp();
-  const key = emailKey(email);
-  await setOtpCookie(key, hashOtp(key, code));
-  return code;
-}
-
-export async function consumeOtp(email: string, code: string): Promise<boolean> {
-  return consumeOtpCookie(emailKey(email), code);
+export async function logActivity(
+  event: Omit<ActivityEvent, "id" | "at"> & { at?: string },
+): Promise<void> {
+  await mutateStore((db) => {
+    pushEvent(db, { ...event, email: emailKey(event.email) });
+  });
 }
 
 function bumpDaily(
@@ -97,8 +95,9 @@ export async function saveOnboarding(
     return { ok: false, error: "age" };
   }
   if (!isTkaTrack(input.tkaTrack)) return { ok: false, error: "track" };
-  const kelas = normalizeKelas(input.kelas);
-  if (kelas.length < 2) return { ok: false, error: "kelas" };
+  const spi = matchSpiClass(input.kelas);
+  if (!spi || spi.tkaTrack !== input.tkaTrack) return { ok: false, error: "kelas" };
+  const kelas = spi.id;
   const pilihan = [...new Set(input.pilihanIds.filter(isPilihanId))];
   if (input.tkaTrack === "12" && pilihan.length !== 2) {
     return { ok: false, error: "pilihan" };
@@ -121,9 +120,37 @@ export async function saveOnboarding(
       streakLastDate: existing?.streakLastDate ?? null,
     };
     db.profiles[email] = next;
+    pushEvent(db, {
+      email,
+      type: "onboarding",
+      detail: `${name} · ${kelas} · track ${next.tkaTrack}`,
+      meta: { kelas, track: next.tkaTrack, age: input.age },
+    });
     return next;
   });
   return { ok: true, profile };
+}
+
+export async function ensureAdminProfile(email: string): Promise<void> {
+  if (!isAdminEmail(email)) return;
+  const key = emailKey(email);
+  const existing = await getProfile(key);
+  if (existing?.onboardingCompletedAt) return;
+  await mutateStore((db) => {
+    const current = db.profiles[key];
+    if (current?.onboardingCompletedAt) return;
+    db.profiles[key] = {
+      email: key,
+      displayName: "Pilar Admin",
+      age: 18,
+      tkaTrack: "12",
+      kelas: "ADMIN",
+      pilihanIds: ["fisika", "kimia"],
+      onboardingCompletedAt: new Date().toISOString(),
+      streakCount: current?.streakCount ?? 0,
+      streakLastDate: current?.streakLastDate ?? null,
+    };
+  });
 }
 
 export async function completeLesson(input: {
@@ -165,6 +192,12 @@ export async function completeLesson(input: {
       status,
       updatedAt: new Date().toISOString(),
     };
+    pushEvent(db, {
+      email: input.email,
+      type: "lesson_complete",
+      detail: `${input.skillId} · ${xp} XP · ${status}`,
+      meta: { skillId: input.skillId, xp, status },
+    });
     return { ok: true as const, streakCount: profile.streakCount, xp };
   });
 }
@@ -219,6 +252,12 @@ export async function submitTryout(input: {
       total,
     };
     db.tryouts.push(attempt);
+    pushEvent(db, {
+      email: input.email,
+      type: "tryout_submit",
+      detail: `${input.packId} · ${scorePercent}% (${correct}/${total})`,
+      meta: { packId: input.packId, scorePercent, correct, total },
+    });
     return { ok: true as const, attempt, streakCount: profile.streakCount, review };
   });
 }

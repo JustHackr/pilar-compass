@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { readSessionEmail } from "@/lib/tka/session";
+import { requireAccountEmail } from "@/lib/tka/session";
 import { saveOnboarding } from "@/lib/tka/service";
+import { TKA_DONE_COOKIE } from "@/lib/tka/onboardingLock";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const email = await readSessionEmail();
+  const email = await requireAccountEmail(req);
   if (!email) return NextResponse.json({ error: "auth" }, { status: 401 });
   const body = (await req.json().catch(() => null)) as {
     displayName?: string;
@@ -21,5 +24,11 @@ export async function POST(req: Request) {
     pilihanIds: Array.isArray(body.pilihanIds) ? body.pilihanIds : [],
   });
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: 400 });
-  return NextResponse.json({ ok: true, profile: result.profile });
+  const res = NextResponse.json({ ok: true, profile: result.profile });
+  res.cookies.set(TKA_DONE_COOKIE, email, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+  return res;
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { questionById } from "@/data/tka/bank";
 import { tryoutById } from "@/data/tka/tryouts";
+import { tkaFetchInit } from "@/lib/tka/client";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { isPg, type LessonCheck, type PgkAnswer } from "@/lib/tka/scoring";
 import { useTkaMe } from "@/components/tka/TkaGate";
@@ -81,15 +82,18 @@ export default function TkaTryoutPage() {
     } else if (q && !isPg(q) && q.statements.every((s) => pgk[s.id] !== undefined)) {
       merged[q.id] = { kind: "pgk", answers: pgk };
     }
-    const res = await fetch("/api/tka/tryout/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        packId: pack?.id,
-        durationSeconds: Math.round((Date.now() - startAt) / 1000),
-        answers: merged,
+    const res = await fetch(
+      "/api/tka/tryout/submit",
+      tkaFetchInit({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          packId: pack?.id,
+          durationSeconds: Math.round((Date.now() - startAt) / 1000),
+          answers: merged,
+        }),
       }),
-    });
+    );
     const data = await res.json();
     if (!res.ok) return;
     setResult({

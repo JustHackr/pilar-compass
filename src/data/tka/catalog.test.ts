@@ -3,6 +3,7 @@ import { GRADE12_WAJIB, PILIHAN_SUBJECTS, isPlayableSubject } from "@/data/tka/c
 import { TRYOUT_PACKS } from "@/data/tka/tryouts";
 import { questionById, skillById } from "@/data/tka/bank";
 import { ALL_TKA_SKILLS } from "@/data/tka/skills";
+import { TKA_PAPERS } from "@/data/tka/sources";
 
 describe("tka catalog", () => {
   it("opens grade 6 and 9 language/math plus grade 12 wajib and eight electives", () => {
@@ -29,6 +30,18 @@ describe("tka catalog", () => {
     expect(isPlayableSubject("9", "bahasa_indonesia")).toBe(true);
     expect(isPlayableSubject("6", "matematika")).toBe(true);
     expect(isPlayableSubject("6", "bahasa_indonesia")).toBe(true);
+  });
+
+  it("files each booklet under one grade and subject", () => {
+    const ids = TKA_PAPERS.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const pack of TRYOUT_PACKS) {
+      if (!pack.paperId) continue;
+      const paper = TKA_PAPERS.find((p) => p.id === pack.paperId);
+      expect(paper).toBeTruthy();
+      expect(paper?.track).toBe(pack.track);
+      expect(paper?.subjectId).toBe(pack.subjectId);
+    }
   });
 
   it("has unique skill ids and every tryout item exists", () => {

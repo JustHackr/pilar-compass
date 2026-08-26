@@ -2,10 +2,49 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { CATALOG, subjectById } from "@/data/tka/catalog";
+import { CATALOG, type TkaSubject } from "@/data/tka/catalog";
+import { PILIHAN_IPA_IDS, PILIHAN_IPS_IDS } from "@/data/tka/sources";
 import { useLocale } from "@/lib/i18n/LocaleContext";
-import { isTkaTrack } from "@/lib/tka/grade";
+import { canAccessTrack, isTkaTrack } from "@/lib/tka/grade";
 import { useTkaMe } from "@/components/tka/TkaGate";
+
+function SubjectCards({
+  grade,
+  subjects,
+  picked,
+  locale,
+  t,
+}: {
+  grade: string;
+  subjects: TkaSubject[];
+  picked: string[];
+  locale: string;
+  t: (key: string) => string;
+}) {
+  if (!subjects.length) return null;
+  return (
+    <div className="tka-grade-grid">
+      {subjects.map((s) => {
+        const open = s.playable;
+        const isPick = picked.includes(s.id);
+        return (
+          <Link
+            key={s.id}
+            href={open ? `/tka/grade/${grade}/${s.id}` : "#"}
+            className={open ? "tka-card" : "tka-card tka-card-locked"}
+            onClick={(e) => {
+              if (!open) e.preventDefault();
+            }}
+          >
+            <h3>{locale === "id" ? s.labelId : s.labelEn}</h3>
+            <p>{open ? t("tka.open") : t("tka.comingSoon")}</p>
+            {isPick ? <p className="tka-status">{t("tka.picked")}</p> : null}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function TkaGradePage() {
   const { t, locale } = useLocale();
@@ -16,11 +55,11 @@ export default function TkaGradePage() {
   const cat = CATALOG[grade];
   const profile = me.profile;
 
-  if (!cat.playable || profile?.tkaTrack !== grade) {
+  if (!cat.playable || !profile?.tkaTrack || !canAccessTrack(profile.tkaTrack, grade)) {
     return (
       <div className="page-wrap tka-page">
         <p className="eyebrow">{t("tka.hub.eyebrow")}</p>
-        <h1>{t("tka.grade", { n: grade })}</h1>
+        <h1>{t(`tka.track.${grade}`)}</h1>
         <p className="lede">{t("tka.lockedGrade")}</p>
         <Link className="btn-secondary" href="/tka">
           {t("tka.backSkills")}
@@ -29,72 +68,52 @@ export default function TkaGradePage() {
     );
   }
 
-  const pilihan = (profile?.pilihanIds ?? [])
-    .map(subjectById)
-    .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  const picked = profile?.pilihanIds ?? [];
+  const ipa = cat.pilihan.filter(
+    (s) => s.playable && (PILIHAN_IPA_IDS as readonly string[]).includes(s.id),
+  );
+  const ips = cat.pilihan.filter(
+    (s) => s.playable && (PILIHAN_IPS_IDS as readonly string[]).includes(s.id),
+  );
 
   return (
     <div className="page-wrap tka-page">
       <p className="eyebrow">{t("tka.hub.eyebrow")}</p>
-      <h1>{t("tka.grade", { n: grade })}</h1>
+      <h1>{t(`tka.track.${grade}`)}</h1>
 
       <h2 className="tka-section">{t("tka.wajib")}</h2>
-      <div className="tka-grade-grid">
-        {cat.wajib.map((s) => (
-          <Link
-            key={s.id}
-            href={s.playable ? `/tka/grade/${grade}/${s.id}` : "#"}
-            className={s.playable ? "tka-card" : "tka-card tka-card-locked"}
-            onClick={(e) => {
-              if (!s.playable) e.preventDefault();
-            }}
-          >
-            <h3>{locale === "id" ? s.labelId : s.labelEn}</h3>
-            <p>{s.playable ? t("tka.open") : t("tka.comingSoon")}</p>
-          </Link>
-        ))}
-      </div>
+      <SubjectCards
+        grade={grade}
+        subjects={cat.wajib}
+        picked={picked}
+        locale={locale}
+        t={t}
+      />
 
-      {cat.pilihan.length > 0 ? (
+      {ipa.length ? (
         <>
-      <h2 className="tka-section">{t("tka.pilihan")}</h2>
-      <div className="tka-grade-grid">
-        {pilihan.map((s) => {
-          const open = s.playable;
-          return (
-            <Link
-              key={s.id}
-              href={open ? `/tka/grade/${grade}/${s.id}` : "#"}
-              className={open ? "tka-card" : "tka-card tka-card-locked"}
-              onClick={(e) => {
-                if (!open) e.preventDefault();
-              }}
-            >
-              <h3>{locale === "id" ? s.labelId : s.labelEn}</h3>
-              <p>{open ? t("tka.open") : t("tka.comingSoon")}</p>
-            </Link>
-          );
-        })}
-      </div>
+          <h2 className="tka-section">{t("tka.pilihanIpa")}</h2>
+          <SubjectCards
+            grade={grade}
+            subjects={ipa}
+            picked={picked}
+            locale={locale}
+            t={t}
+          />
         </>
       ) : null}
 
-      {grade === "12" && pilihan.some((s) => !s.playable) ? (
-        <p className="tka-hint-line">
-          {locale === "id" ? (
-            <>
-              Delapan mapel pilihan sudah bisa dilatih (kecuali bahasa asing dan
-              Informatika). Ubah dua pilihan di{" "}
-              <Link href="/tka/onboarding">pengaturan jalur</Link>.
-            </>
-          ) : (
-            <>
-              Eight electives are playable (except foreign languages and
-              Informatics). Change your two picks in{" "}
-              <Link href="/tka/onboarding">path setup</Link>.
-            </>
-          )}
-        </p>
+      {ips.length ? (
+        <>
+          <h2 className="tka-section">{t("tka.pilihanIps")}</h2>
+          <SubjectCards
+            grade={grade}
+            subjects={ips}
+            picked={picked}
+            locale={locale}
+            t={t}
+          />
+        </>
       ) : null}
     </div>
   );

@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clearSession } from "@/lib/session";
 import { resetTour } from "@/lib/tour";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { LocaleToggle } from "@/lib/i18n/LocaleToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
+import { isAdminEmail } from "@/data/spi-classes";
+import { logClientActivity, tkaFetchInit } from "@/lib/tka/client";
 
 type Props = {
   email: string;
@@ -21,7 +23,10 @@ export function AppShell({ email, onSignOut, children }: Props) {
   const { t } = useLocale();
   const [replayTour, setReplayTour] = useState(false);
 
-  function signOut() {
+  const lastPath = useRef<string | null>(null);
+
+  async function signOut() {
+    await fetch("/api/tka/logout", tkaFetchInit({ method: "POST" }));
     clearSession();
     onSignOut();
   }
@@ -31,11 +36,19 @@ export function AppShell({ email, onSignOut, children }: Props) {
     setReplayTour(true);
   }
 
+  useEffect(() => {
+    if (lastPath.current === pathname) return;
+    lastPath.current = pathname;
+    logClientActivity("page_view", pathname);
+  }, [pathname]);
+
   const links = [
     { href: "/", label: t("nav.home") },
     { href: "/tka", label: t("nav.tka") },
+    { href: "/osn", label: t("nav.osn") },
     { href: "/competitions", label: t("nav.competitions") },
     { href: "/calculator", label: t("nav.calculator") },
+    ...(isAdminEmail(email) ? [{ href: "/admin", label: t("nav.admin") }] : []),
   ];
 
   return (

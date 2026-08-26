@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { readSessionEmail } from "@/lib/tka/session";
+import { requireAccountEmail } from "@/lib/tka/session";
 import { getProfile, leaderboard } from "@/lib/tka/service";
 
 export async function GET(req: Request) {
-  const email = await readSessionEmail();
+  const email = await requireAccountEmail(req);
   if (!email) return NextResponse.json({ error: "auth" }, { status: 401 });
   const url = new URL(req.url);
   const scope = url.searchParams.get("scope") === "class" ? "class" : "school";

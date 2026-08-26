@@ -3,8 +3,11 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isValidEmail, unlockSession } from "@/lib/session";
+import { isTkaOnboarded, markTkaOnboarded } from "@/lib/tka/onboardingLock";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { LocaleToggle } from "@/lib/i18n/LocaleToggle";
+import { isAdminEmail } from "@/data/spi-classes";
+import { logClientActivity } from "@/lib/tka/client";
 
 type Props = {
   onUnlock: (email: string) => void;
@@ -26,9 +29,13 @@ export function EmailGate({ onUnlock }: Props) {
       setError(t("gate.error"));
       return;
     }
-    unlockSession(value);
-    onUnlock(value.trim());
-    router.replace("/");
+    const key = value.trim().toLowerCase();
+    unlockSession(key);
+    if (isTkaOnboarded(key)) markTkaOnboarded(key);
+    const dest = isAdminEmail(key) ? "/admin" : "/";
+    router.replace(dest);
+    onUnlock(key);
+    logClientActivity("site_unlock", dest, "Site gate unlocked");
   }
 
   function handleSubmit(e: FormEvent) {
@@ -62,7 +69,7 @@ export function EmailGate({ onUnlock }: Props) {
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="name@example.com"
+            placeholder="name@pilar.sch.id"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -74,13 +81,6 @@ export function EmailGate({ onUnlock }: Props) {
           <div className="gate-actions">
             <button type="submit" className="btn-primary">
               {t("gate.unlock")}
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => unlock("demo@sekolah-pilar-indonesia.sch.id")}
-            >
-              {t("gate.demo")}
             </button>
           </div>
         </form>

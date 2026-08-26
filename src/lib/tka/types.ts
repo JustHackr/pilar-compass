@@ -55,6 +55,30 @@ export type OtpRecord = {
   expiresAt: number;
 };
 
+export type ActivityEvent = {
+  id: string;
+  at: string;
+  email: string;
+  type: string;
+  path?: string;
+  detail?: string;
+  meta?: Record<string, string | number | boolean | null>;
+};
+
+export type TkaPublicMe = {
+  email: string;
+  profile: TkaProfile | null;
+  today: {
+    lessonsCompleted: number;
+    tryoutsSubmitted: number;
+    xpEarned: number;
+    streakCounted: boolean;
+  };
+  monthXp: number;
+  monthScore: number;
+  mastery: SkillMastery[];
+};
+
 export type TkaDb = {
   profiles: Record<string, TkaProfile>;
   daily: DailyActivity[];
@@ -62,6 +86,7 @@ export type TkaDb = {
   tryouts: TryoutAttempt[];
   mastery: Record<string, SkillMastery>;
   otps: Record<string, OtpRecord>;
+  events: ActivityEvent[];
 };
 
 export function emptyDb(): TkaDb {
@@ -72,9 +97,11 @@ export function emptyDb(): TkaDb {
     tryouts: [],
     mastery: {},
     otps: {},
+    events: [],
   };
 }
 
 export function masteryKey(email: string, skillId: string): string {
   return `${email}::${skillId}`;
 }
+

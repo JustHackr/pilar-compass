@@ -111,28 +111,6 @@ export function CalculatorView() {
     }
   }
 
-  function loadDemoProfile() {
-    setSubjects([
-      { name: "Matematika", score: 91 },
-      { name: "Bahasa Inggris", score: 89 },
-      { name: "Fisika", score: 87 },
-      { name: "Informatika", score: 93 },
-    ]);
-    setUniversity("Australian National University (ANU)");
-    setCountry("Australia");
-    setRegion("abroad");
-    setIelts("6.5");
-    setToefl("");
-    setSat("");
-    setAffordability("need_scholarship");
-    setAge(17);
-    setIntendedMajor("Computer Science");
-    setCompetitionAwards(3);
-    setResult(null);
-    setError("");
-    setOcrStatus("idle");
-  }
-
   function updateSubject(i: number, patch: Partial<SubjectScore>) {
     setSubjects((prev) =>
       prev.map((s, idx) => (idx === i ? { ...s, ...patch } : s)),
@@ -214,16 +192,9 @@ export function CalculatorView() {
   return (
     <div className="page-wrap">
       <header className="page-hero">
-        <div className="page-hero-row">
-          <div>
-            <p className="eyebrow">{t("calc.eyebrow")}</p>
-            <h1>{t("calc.title")}</h1>
-            <p className="lede">{t("calc.lede")}</p>
-          </div>
-          <button type="button" className="btn-secondary" onClick={loadDemoProfile}>
-            {t("calc.demo")}
-          </button>
-        </div>
+        <p className="eyebrow">{t("calc.eyebrow")}</p>
+        <h1>{t("calc.title")}</h1>
+        <p className="lede">{t("calc.lede")}</p>
       </header>
 
       <form className="calc-grid" onSubmit={onSubmit}>

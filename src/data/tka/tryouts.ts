@@ -7,6 +7,7 @@ export type TryoutPack = {
   kind: TryoutKind;
   track: TkaTrack;
   subjectId: string;
+  paperId?: string;
   titleEn: string;
   titleId: string;
   questionIds: string[];
@@ -19,6 +20,7 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "official",
     track: "12",
     subjectId: "matematika",
+    paperId: "sma-math-wajib",
     titleEn: "Official-style paper 1 · SMA Mathematics",
     titleId: "Paket resmi-gaya 1 · Matematika SMA",
     questionIds: [
@@ -52,8 +54,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "official",
     track: "12",
     subjectId: "kimia",
+    paperId: "sma-kimia-asli",
     titleEn: "Official TKA Chemistry 2025",
-    titleId: "TKA Kimia Asli 2025",
+    titleId: "Soal Asli TKA Kimia SMA 2025",
     questionIds: [
       "k12-o-01",
       "k12-o-03",
@@ -76,8 +79,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "kimia",
-    titleEn: "Chemistry practice set 2025",
-    titleId: "Set latihan TKA Kimia 2025",
+    paperId: "sma-kimia-to",
+    titleEn: "Chemistry tryout practice 2025",
+    titleId: "Latihan TO TKA Kimia 2025",
     questionIds: [
       "k12-l-01",
       "k12-l-02",
@@ -101,6 +105,7 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "official",
     track: "12",
     subjectId: "bahasa_indonesia",
+    paperId: "sma-bi",
     titleEn: "Official TKA Indonesian 2025",
     titleId: "TKA Bahasa Indonesia Asli 2025",
     questionIds: [
@@ -130,6 +135,7 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "official",
     track: "12",
     subjectId: "bahasa_inggris",
+    paperId: "sma-en",
     titleEn: "Official TKA English 2025",
     titleId: "TKA Bahasa Inggris Asli 2025",
     questionIds: [
@@ -154,6 +160,7 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "official",
     track: "9",
     subjectId: "matematika",
+    paperId: "smp-math-official",
     titleEn: "Official TKA SMP Mathematics 2025",
     titleId: "TKA Matematika SMP Asli 2025",
     questionIds: [
@@ -176,8 +183,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "fisika",
-    titleEn: "Physics practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Fisika (PDF pindaian belum OCR)",
+    paperId: "sma-fisika",
+    titleEn: "TKA Physics SMA 2025 (elective paper)",
+    titleId: "SOAL TKA Fisika SMA 2025 Pilihan",
     questionIds: [
       "fis-l-01",
       "fis-l-02",
@@ -198,8 +206,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "biologi",
-    titleEn: "Biology practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Biologi (PDF pindaian belum OCR)",
+    paperId: "sma-biologi",
+    titleEn: "TKA Biology SMA 2025 (elective paper)",
+    titleId: "SOAL TKA Biologi SMA 2025 Pilihan",
     questionIds: [
       "bio-l-01",
       "bio-l-02",
@@ -220,8 +229,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "matematika_lanjut",
-    titleEn: "Advanced math practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Matematika Lanjut (PDF pindaian belum OCR)",
+    paperId: "sma-lanjut",
+    titleEn: "TKA Advanced Mathematics SMA 2025",
+    titleId: "SOAL TKA Matematika SMA 2025 Tingkat Lanjut",
     questionIds: [
       "lan-l-01",
       "lan-l-02",
@@ -242,8 +252,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "ekonomi",
-    titleEn: "Economics practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Ekonomi (PDF pindaian belum OCR)",
+    paperId: "sma-ekonomi",
+    titleEn: "TKA Economics SMA 2025 (elective paper)",
+    titleId: "SOAL TKA Ekonomi SMA 2025 Pilihan",
     questionIds: [
       "eko-l-01",
       "eko-l-02",
@@ -264,8 +275,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "sosiologi",
-    titleEn: "Sociology practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Sosiologi (PDF pindaian belum OCR)",
+    paperId: "sma-sosiologi",
+    titleEn: "TKA Sociology SMA 2025 (elective paper)",
+    titleId: "SOAL TKA Sosiologi SMA 2025 Pilihan",
     questionIds: [
       "sos-l-01",
       "sos-l-02",
@@ -286,8 +298,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "geografi",
-    titleEn: "Geography practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Geografi (PDF pindaian belum OCR)",
+    paperId: "sma-geografi",
+    titleEn: "TKA Geography SMA 2025 (elective paper)",
+    titleId: "SOAL TKA Geografi SMA 2025 Pilihan",
     questionIds: [
       "geo-l-01",
       "geo-l-02",
@@ -308,8 +321,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "sejarah",
-    titleEn: "History practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan Sejarah (PDF pindaian belum OCR)",
+    paperId: "sma-sejarah",
+    titleEn: "TKA History SMA 2025 (elective paper)",
+    titleId: "SOAL TKA Sejarah SMA 2025 Pilihan",
     questionIds: [
       "sej-l-01",
       "sej-l-02",
@@ -330,8 +344,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "12",
     subjectId: "ppkn",
-    titleEn: "PPKn practice mock (scans not OCR’d)",
-    titleId: "Tryout latihan PPKn (PDF pindaian belum OCR)",
+    paperId: "sma-ppkn",
+    titleEn: "TKA PPKn SMA 2025 (elective paper)",
+    titleId: "SOAL TKA PPKn SMA 2025 Pilihan",
     questionIds: [
       "ppkn-l-01",
       "ppkn-l-02",
@@ -352,8 +367,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "6",
     subjectId: "bahasa_indonesia",
-    titleEn: "SD Indonesian · TKA-style booklet",
-    titleId: "Bahasa Indonesia SD · bundel TKA",
+    paperId: "sd-bi",
+    titleEn: "SD Indonesian booklet",
+    titleId: "Bundel TKA SD · Bahasa Indonesia",
     questionIds: [
       "bi6-b-01",
       "bi6-b-02",
@@ -374,8 +390,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "6",
     subjectId: "matematika",
-    titleEn: "SD Mathematics · TKA-style booklet",
-    titleId: "Matematika SD · bundel TKA",
+    paperId: "sd-math",
+    titleEn: "SD Mathematics booklet",
+    titleId: "Bundel TKA SD · Matematika",
     questionIds: [
       "m6-b-01",
       "m6-b-02",
@@ -396,8 +413,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "9",
     subjectId: "bahasa_indonesia",
-    titleEn: "SMP Indonesian · TKA-style booklet",
-    titleId: "Bahasa Indonesia SMP · bundel TKA",
+    paperId: "smp-bi",
+    titleEn: "SMP Indonesian booklet",
+    titleId: "Bundel TKA SMP · Bahasa Indonesia",
     questionIds: [
       "bi9-b-01",
       "bi9-b-02",
@@ -418,8 +436,9 @@ export const TRYOUT_PACKS: TryoutPack[] = [
     kind: "latihan",
     track: "9",
     subjectId: "matematika",
-    titleEn: "SMP Mathematics · extra booklet items",
-    titleId: "Matematika SMP · bundel tambahan",
+    paperId: "smp-math-bundle",
+    titleEn: "SMP Mathematics extra booklet items",
+    titleId: "Bundel TKA SMP · Matematika tambahan",
     questionIds: [
       "m9-b-01",
       "m9-b-02",
@@ -439,4 +458,16 @@ export const TRYOUT_PACKS: TryoutPack[] = [
 
 export function tryoutById(id: string): TryoutPack | undefined {
   return TRYOUT_PACKS.find((p) => p.id === id);
+}
+
+const KIND_ORDER: Record<TryoutKind, number> = {
+  official: 0,
+  latihan: 1,
+  prediction: 2,
+};
+
+export function tryoutsForSubject(track: TkaTrack, subjectId: string): TryoutPack[] {
+  return TRYOUT_PACKS.filter((p) => p.track === track && p.subjectId === subjectId).sort(
+    (a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || a.id.localeCompare(b.id),
+  );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { CATALOG } from "@/data/tka/catalog";
 import { ALL_TKA_SKILLS } from "@/data/tka/skills";
 import { useLocale } from "@/lib/i18n/LocaleContext";
+import { canAccessTrack, tracksVisibleFor } from "@/lib/tka/grade";
 import { streakBadges } from "@/lib/tka/streak";
 import { useTkaMe } from "@/components/tka/TkaGate";
 
@@ -42,7 +42,7 @@ export default function TkaHubPage() {
       <div className="tka-actions">
         {continueSkill &&
         profile?.tkaTrack &&
-        (continueSkill.track ?? "12") === profile.tkaTrack ? (
+        canAccessTrack(profile.tkaTrack, continueSkill.track ?? "12") ? (
           <Link className="btn-primary" href={`/tka/lesson/${continueSkill.id}`}>
             {t("tka.continue")}
           </Link>
@@ -53,40 +53,24 @@ export default function TkaHubPage() {
       </div>
 
       <div className="tka-grade-grid">
-        {(["6", "9", "12"] as const).map((g) => {
-          const cat = CATALOG[g];
-          const locked = !cat.playable || profile?.tkaTrack !== g;
-          return (
-            <Link
-              key={g}
-              href={locked ? "#" : `/tka/grade/${g}`}
-              className={locked ? "tka-card tka-card-locked" : "tka-card"}
-              aria-disabled={locked}
-              onClick={(e) => {
-                if (locked) e.preventDefault();
-              }}
-            >
-              <h2>{t("tka.grade", { n: g })}</h2>
-              {locked ? (
-                <p>{t("tka.comingSoon")}</p>
-              ) : (
-                <p>
-                  {locale === "id"
-                    ? g === "6"
-                      ? "Matematika dan Bahasa Indonesia SD"
-                      : g === "9"
-                        ? "Matematika dan Bahasa Indonesia SMP"
-                        : "Wajib Matematika, BI, Inggris, plus 8 mapel pilihan"
-                    : g === "6"
-                      ? "SD math and Indonesian"
-                      : g === "9"
-                        ? "SMP math and Indonesian"
-                        : "Math, Indonesian, English, plus 8 electives"}
-                </p>
-              )}
-            </Link>
-          );
-        })}
+        {(profile?.tkaTrack ? tracksVisibleFor(profile.tkaTrack) : []).map((g) => (
+          <Link key={g} href={`/tka/grade/${g}`} className="tka-card">
+            <h2>{t(`tka.track.${g}`)}</h2>
+            <p>
+              {locale === "id"
+                ? g === "6"
+                  ? "Wajib: Matematika, Bahasa Indonesia"
+                  : g === "9"
+                    ? "Wajib: Matematika, Bahasa Indonesia"
+                    : "Wajib: Matematika, BI, Inggris · Pilihan IPA & IPS"
+                : g === "6"
+                  ? "Compulsory: Math, Indonesian"
+                  : g === "9"
+                    ? "Compulsory: Math, Indonesian"
+                    : "Compulsory math, Indonesian, English · science & social electives"}
+            </p>
+          </Link>
+        ))}
       </div>
     </div>
   );

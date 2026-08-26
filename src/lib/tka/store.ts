@@ -1,12 +1,17 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { demoDb } from "./demo";
 import { emptyDb, type TkaDb } from "./types";
 
-const FILE = path.join(process.cwd(), "data", "tka-store.json");
-const TMP_FILE = "/tmp/pilar-tka-store.json";
-
-function storePath(): string {
-  return process.env.VERCEL ? TMP_FILE : FILE;
+export function parseDb(raw: unknown): TkaDb {
+  const parsed = (raw && typeof raw === "object" ? raw : {}) as Partial<TkaDb>;
+  return {
+    profiles: parsed.profiles ?? emptyDb().profiles,
+    daily: parsed.daily ?? [],
+    lessons: parsed.lessons ?? [],
+    tryouts: parsed.tryouts ?? [],
+    mastery: parsed.mastery ?? {},
+    otps: parsed.otps ?? {},
+    events: parsed.events ?? [],
+  };
 }
 
 let mem: TkaDb | null = null;
@@ -21,41 +26,24 @@ function withLock<T>(fn: () => Promise<T>): Promise<T> {
   return run;
 }
 
-async function readDisk(): Promise<TkaDb> {
-  try {
-    const raw = await readFile(storePath(), "utf8");
-    const parsed = JSON.parse(raw) as TkaDb;
-    return {
-      profiles: parsed.profiles ?? {},
-      daily: parsed.daily ?? [],
-      lessons: parsed.lessons ?? [],
-      tryouts: parsed.tryouts ?? [],
-      mastery: parsed.mastery ?? {},
-      otps: parsed.otps ?? {},
-    };
-  } catch {
-    return emptyDb();
-  }
+function loadDemo(): TkaDb {
+  return structuredClone(demoDb());
 }
 
-async function writeDisk(db: TkaDb): Promise<void> {
-  const file = storePath();
-  await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, JSON.stringify(db), "utf8");
+export function resetStoreForTests(): void {
+  mem = null;
 }
 
 export async function mutateStore<T>(fn: (db: TkaDb) => T | Promise<T>): Promise<T> {
   return withLock(async () => {
-    mem = await readDisk();
-    const result = await fn(mem);
-    await writeDisk(mem);
-    return result;
+    mem ??= loadDemo();
+    return fn(mem);
   });
 }
 
 export async function readStore(): Promise<TkaDb> {
   return withLock(async () => {
-    mem = await readDisk();
+    mem ??= loadDemo();
     return mem;
   });
 }

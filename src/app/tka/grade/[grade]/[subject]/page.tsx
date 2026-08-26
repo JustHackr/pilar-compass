@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { isPlayableSubject, subjectById } from "@/data/tka/catalog";
 import { skillsForSubject } from "@/data/tka/bank";
-import { TRYOUT_PACKS } from "@/data/tka/tryouts";
+import { tryoutsForSubject } from "@/data/tka/tryouts";
 import { useLocale } from "@/lib/i18n/LocaleContext";
-import { isTkaTrack } from "@/lib/tka/grade";
+import { canAccessTrack, isTkaTrack } from "@/lib/tka/grade";
 import { useTkaMe } from "@/components/tka/TkaGate";
 
 export default function TkaSubjectPage() {
@@ -18,11 +18,13 @@ export default function TkaSubjectPage() {
   if (!isTkaTrack(grade)) return null;
   const subject = subjectById(subjectId);
   const playable = isPlayableSubject(grade, subjectId);
-  const isPilihan = subject?.group === "pilihan";
-  const allowedPilihan =
-    !isPilihan || (me.profile?.pilihanIds ?? []).includes(subjectId);
 
-  if (!subject || !playable || me.profile?.tkaTrack !== grade || !allowedPilihan) {
+  if (
+    !subject ||
+    !playable ||
+    !me.profile?.tkaTrack ||
+    !canAccessTrack(me.profile.tkaTrack, grade)
+  ) {
     return (
       <div className="page-wrap tka-page">
         <h1>{t("tka.lockedSubject")}</h1>
@@ -34,11 +36,11 @@ export default function TkaSubjectPage() {
   }
 
   const skills = skillsForSubject(subjectId, grade);
-  const packs = TRYOUT_PACKS.filter((p) => p.subjectId === subjectId && p.track === grade);
+  const packs = tryoutsForSubject(grade, subjectId);
 
   return (
     <div className="page-wrap tka-page">
-      <p className="eyebrow">{t("tka.grade", { n: grade })}</p>
+      <p className="eyebrow">{t(`tka.track.${grade}`)}</p>
       <h1>{locale === "id" ? subject.labelId : subject.labelEn}</h1>
 
       <h2 className="tka-section">{t("tka.lesson")}</h2>

@@ -17,6 +17,9 @@ export default function HomePage() {
             <Link href="/tka" className="btn-primary">
               {t("home.cta.tka")}
             </Link>
+            <Link href="/osn" className="btn-secondary">
+              {t("home.cta.osn")}
+            </Link>
             <Link href="/competitions" className="btn-secondary">
               {t("home.cta.comps")}
             </Link>

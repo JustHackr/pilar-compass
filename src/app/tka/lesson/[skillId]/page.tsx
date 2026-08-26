@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { questionsForSubject, skillById } from "@/data/tka/bank";
+import { tkaFetchInit } from "@/lib/tka/client";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import {
   enqueueRedemption,
@@ -110,15 +111,18 @@ export default function TkaLessonPage() {
     setFeedback(null);
     if (nextQueue.length === 0) {
       setSaving(true);
-      await fetch("/api/tka/lesson/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          skillId: skill?.id,
-          xp: xpRef.current + XP_LESSON_BONUS,
-          outcomes: outcomesRef.current,
+      await fetch(
+        "/api/tka/lesson/complete",
+        tkaFetchInit({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            skillId: skill?.id,
+            xp: xpRef.current + XP_LESSON_BONUS,
+            outcomes: outcomesRef.current,
+          }),
         }),
-      });
+      );
       await reload();
       setSaving(false);
       setPhase("done");

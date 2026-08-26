@@ -2,30 +2,28 @@
 
 import {
   createContext,
-  FormEvent,
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { getStoredEmail } from "@/lib/session";
 import { useLocale } from "@/lib/i18n/LocaleContext";
-import type { SkillMastery, TkaProfile } from "@/lib/tka/types";
+import { isAdminEmail } from "@/data/spi-classes";
+import { getStoredEmail } from "@/lib/session";
+import { tkaFetchInit } from "@/lib/tka/client";
+import { preferOnboardedMe, tkaGateRedirect } from "@/lib/tka/gate";
+import {
+  blankMe,
+  emptyOnboardedMe,
+  isTkaOnboarded,
+  markTkaOnboarded,
+} from "@/lib/tka/onboardingLock";
+import { readCachedMe, writeCachedMe } from "@/lib/tka/profileCache";
+import type { TkaPublicMe } from "@/lib/tka/types";
 
-export type TkaMe = {
-  email: string;
-  profile: TkaProfile | null;
-  today: {
-    lessonsCompleted: number;
-    tryoutsSubmitted: number;
-    xpEarned: number;
-    streakCounted: boolean;
-  };
-  monthXp: number;
-  monthScore: number;
-  mastery: SkillMastery[];
-};
+export type TkaMe = TkaPublicMe;
 
 const TkaMeContext = createContext<{
   me: TkaMe;
@@ -38,122 +36,144 @@ export function useTkaMe() {
   return ctx;
 }
 
-export function TkaGate({ children }: { children: React.ReactNode }) {
+function tkaFinished(email: string, profile: TkaMe["profile"]): boolean {
+  return isAdminEmail(email) || isTkaOnboarded(email) || Boolean(profile?.onboardingCompletedAt);
+}
+
+function keepFinishedMe(email: string, cached: TkaMe | null, server: TkaMe | null): TkaMe {
+  const merged = server ? preferOnboardedMe(server, cached) : cached;
+  if (merged?.profile?.onboardingCompletedAt) return merged;
+  if (cached?.profile?.onboardingCompletedAt) return cached;
+  if (tkaFinished(email, null)) return cached ?? emptyOnboardedMe(email);
+  return merged ?? blankMe(email);
+}
+
+async function restoreServerProfile(cached: TkaMe): Promise<boolean> {
+  const profile = cached.profile;
+  if (!profile?.onboardingCompletedAt) return false;
+  const res = await fetch(
+    "/api/tka/onboarding",
+    tkaFetchInit({
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        displayName: profile.displayName,
+        age: profile.age,
+        tkaTrack: profile.tkaTrack,
+        kelas: profile.kelas,
+        pilihanIds: profile.pilihanIds,
+      }),
+    }),
+  );
+  return res.ok;
+}
+
+export function TkaGate({
+  children,
+  requireAdmin = false,
+}: {
+  children: React.ReactNode;
+  requireAdmin?: boolean;
+}) {
   const { t } = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [me, setMe] = useState<TkaMe | null>(null);
-  const [needVerify, setNeedVerify] = useState(false);
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [devCode, setDevCode] = useState("");
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [forbidden, setForbidden] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const loadSeq = useRef(0);
 
   const loadMe = useCallback(async () => {
-    const res = await fetch("/api/tka/me");
-    if (res.status === 401) {
-      setNeedVerify(true);
-      setMe(null);
+    const seq = ++loadSeq.current;
+    const email = (getStoredEmail() ?? "").toLowerCase().trim();
+    const cached = email ? readCachedMe(email) : null;
+    if (cached?.profile?.onboardingCompletedAt) {
+      markTkaOnboarded(email);
+      setMe(cached);
+      setLoadError(false);
+    } else if (email && isTkaOnboarded(email)) {
+      setMe(emptyOnboardedMe(email));
+      setLoadError(false);
+    }
+
+    const res = await fetch("/api/tka/me", {
+      ...tkaFetchInit(),
+      cache: "no-store",
+    });
+    if (seq !== loadSeq.current) return;
+    if (!res.ok) {
+      if (cached || (email && isTkaOnboarded(email))) return;
+      setLoadError(true);
       return;
     }
-    if (!res.ok) return;
-    const data = (await res.json()) as TkaMe;
-    setNeedVerify(false);
-    setMe(data);
-    if (!data.profile?.onboardingCompletedAt && pathname !== "/tka/onboarding") {
-      router.replace("/tka/onboarding");
+    const server = (await res.json()) as TkaMe;
+    if (seq !== loadSeq.current) return;
+    let data = keepFinishedMe(email || server.email, cached, server);
+    if (cached?.profile?.onboardingCompletedAt && !server.profile?.onboardingCompletedAt) {
+      const restored = await restoreServerProfile(cached);
+      if (seq !== loadSeq.current) return;
+      if (restored) {
+        const again = await fetch("/api/tka/me", {
+          ...tkaFetchInit(),
+          cache: "no-store",
+        });
+        if (again.ok) {
+          data = keepFinishedMe(email || server.email, cached, (await again.json()) as TkaMe);
+        }
+      }
     }
-  }, [pathname, router]);
+    if (data.profile?.onboardingCompletedAt) {
+      markTkaOnboarded(data.email);
+      writeCachedMe(data);
+    }
+    if (tkaFinished(data.email, data.profile) && !data.profile?.onboardingCompletedAt) {
+      data = keepFinishedMe(data.email, cached, data);
+    }
+    setMe(data);
+    setLoadError(false);
+    if (requireAdmin && !isAdminEmail(data.email)) {
+      setForbidden(true);
+      return;
+    }
+    setForbidden(false);
+  }, [requireAdmin]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- async session fetch
     void loadMe();
   }, [loadMe]);
 
-  async function sendCode(e: FormEvent) {
-    e.preventDefault();
-    const target = email || getStoredEmail() || "";
-    setEmail(target);
-    setBusy(true);
-    setError("");
-    const res = await fetch("/api/tka/otp/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: target }),
+  const finished = Boolean(me && tkaFinished(me.email, me.profile));
+
+  useEffect(() => {
+    if (!me || forbidden) return;
+    const dest = tkaGateRedirect({
+      pathname,
+      email: me.email,
+      onboarded: tkaFinished(me.email, me.profile),
     });
-    const data = (await res.json()) as { devCode?: string };
-    setBusy(false);
-    if (!res.ok) {
-      setError(t("tka.verify.error"));
-      return;
-    }
-    if (data.devCode) setDevCode(data.devCode);
+    if (dest) router.replace(dest);
+  }, [forbidden, me, pathname, router]);
+
+  if (forbidden) {
+    return (
+      <div className="page-wrap tka-page">
+        <p className="eyebrow">{t("admin.verify.eyebrow")}</p>
+        <h1>{t("admin.forbidden.title")}</h1>
+        <p className="lede">{t("admin.forbidden.body")}</p>
+      </div>
+    );
   }
 
-  async function verify(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError("");
-    const res = await fetch("/api/tka/otp/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, code }),
-    });
-    setBusy(false);
-    if (!res.ok) {
-      setError(t("tka.verify.error"));
-      return;
-    }
-    await loadMe();
-  }
-
-  if (needVerify) {
+  if (loadError && !me) {
     return (
       <div className="page-wrap tka-page">
         <p className="eyebrow">{t("tka.hub.eyebrow")}</p>
-        <h1>{t("tka.verify.title")}</h1>
-        <p className="lede">{t("tka.verify.body")}</p>
-        <form className="tka-form" onSubmit={sendCode}>
-          <label className="field-label" htmlFor="tka-email">
-            {t("gate.email")}
-          </label>
-          <input
-            id="tka-email"
-            className="field-input"
-            type="email"
-            value={email}
-            placeholder={getStoredEmail() ?? "name@example.com"}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button className="btn-secondary" type="submit" disabled={busy}>
-            {t("tka.verify.send")}
-          </button>
-        </form>
-        {devCode ? (
-          <p className="tka-otp-reveal" role="status">
-            {t("tka.verify.sent", { code: devCode })}
-          </p>
-        ) : null}
-        <form className="tka-form" onSubmit={verify}>
-          <label className="field-label" htmlFor="tka-code">
-            {t("tka.verify.code")}
-          </label>
-          <input
-            id="tka-code"
-            className="field-input"
-            inputMode="numeric"
-            pattern="\d{6}"
-            maxLength={6}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-          />
-          {error ? <p className="field-error">{error}</p> : null}
-          <button className="btn-primary" type="submit" disabled={busy}>
-            {t("tka.verify.submit")}
-          </button>
-        </form>
+        <h1>{t("tka.hub.title")}</h1>
+        <p className="lede">{t("tka.loadError")}</p>
+        <button type="button" className="btn-primary" onClick={() => void loadMe()}>
+          {t("admin.refresh")}
+        </button>
       </div>
     );
   }
@@ -162,7 +182,7 @@ export function TkaGate({ children }: { children: React.ReactNode }) {
     return <div className="page-wrap tka-page" aria-busy="true" />;
   }
 
-  if (!me.profile?.onboardingCompletedAt && pathname !== "/tka/onboarding") {
+  if (finished && pathname === "/tka/onboarding") {
     return <div className="page-wrap tka-page" aria-busy="true" />;
   }
 

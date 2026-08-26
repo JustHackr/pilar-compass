@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { tkaFetchInit } from "@/lib/tka/client";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 
 type Row = {
@@ -20,7 +21,10 @@ export default function TkaLeaderboardPage() {
 
   useEffect(() => {
     void (async () => {
-      const res = await fetch(`/api/tka/leaderboard?scope=${scope}`);
+      const res = await fetch(
+        `/api/tka/leaderboard?scope=${scope}`,
+        tkaFetchInit(),
+      );
       if (!res.ok) return;
       const data = (await res.json()) as { rows: Row[]; kelas: string | null };
       setRows(data.rows);

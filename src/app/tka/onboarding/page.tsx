@@ -3,6 +3,9 @@
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PILIHAN_SUBJECTS } from "@/data/tka/catalog";
+import { classesForTrack } from "@/data/spi-classes";
+import { tkaFetchInit } from "@/lib/tka/client";
+import { writeCachedMe } from "@/lib/tka/profileCache";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { suggestTrack, type TkaTrack } from "@/lib/tka/grade";
 import { useTkaMe } from "@/components/tka/TkaGate";
@@ -15,12 +18,24 @@ export default function TkaOnboardingPage() {
   const [displayName, setDisplayName] = useState(existing?.displayName ?? "");
   const [age, setAge] = useState(existing?.age ? String(existing.age) : "17");
   const [track, setTrack] = useState<TkaTrack>(existing?.tkaTrack ?? "12");
-  const [kelas, setKelas] = useState(existing?.kelas ?? "");
+  const [kelas, setKelas] = useState(() => {
+    const id = existing?.kelas ?? "";
+    const track0 = existing?.tkaTrack ?? "12";
+    return classesForTrack(track0).some((c) => c.id === id) ? id : "";
+  });
   const [pilihan, setPilihan] = useState<string[]>(existing?.pilihanIds ?? []);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const suggested = useMemo(() => suggestTrack(Number(age) || 17), [age]);
+  const classOptions = useMemo(() => classesForTrack(track), [track]);
+
+  function onTrackChange(next: TkaTrack) {
+    setTrack(next);
+    if (!classesForTrack(next).some((c) => c.id === kelas)) {
+      setKelas("");
+    }
+  }
 
   function toggle(id: string) {
     setPilihan((cur) => {
@@ -34,24 +49,31 @@ export default function TkaOnboardingPage() {
     e.preventDefault();
     setBusy(true);
     setError(false);
-    const res = await fetch("/api/tka/onboarding", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        displayName,
-        age: Number(age),
-        tkaTrack: track,
-        kelas,
-        pilihanIds: track === "12" ? pilihan : [],
+    const res = await fetch(
+      "/api/tka/onboarding",
+      tkaFetchInit({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          displayName,
+          age: Number(age),
+          tkaTrack: track,
+          kelas,
+          pilihanIds: track === "12" ? pilihan : [],
+        }),
       }),
-    });
+    );
     setBusy(false);
     if (!res.ok) {
       setError(true);
       return;
     }
-    await reload();
+    const payload = (await res.json()) as { profile?: typeof existing };
+    if (payload.profile) {
+      writeCachedMe({ ...me, profile: payload.profile });
+    }
     router.replace("/tka");
+    await reload();
   }
 
   return (
@@ -71,7 +93,7 @@ export default function TkaOnboardingPage() {
           value={age}
           onChange={(e) => {
             setAge(e.target.value);
-            setTrack(suggestTrack(Number(e.target.value) || 17));
+            onTrackChange(suggestTrack(Number(e.target.value) || 17));
           }}
         />
         <p className="tka-hint-line">
@@ -86,7 +108,7 @@ export default function TkaOnboardingPage() {
                 type="radio"
                 name="track"
                 checked={track === g}
-                onChange={() => setTrack(g)}
+                onChange={() => onTrackChange(g)}
               />
               {t("tka.grade", { n: g })}
             </label>
@@ -107,14 +129,20 @@ export default function TkaOnboardingPage() {
         <label className="field-label" htmlFor="tka-kelas">
           {t("tka.onboard.kelas")}
         </label>
-        <input
+        <select
           id="tka-kelas"
           className="field-input"
-          placeholder="12-A"
           value={kelas}
           onChange={(e) => setKelas(e.target.value)}
           required
-        />
+        >
+          <option value="">{t("tka.onboard.kelasPick")}</option>
+          {classOptions.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.label}
+            </option>
+          ))}
+        </select>
 
         {track === "12" ? (
           <fieldset className="tka-fieldset">

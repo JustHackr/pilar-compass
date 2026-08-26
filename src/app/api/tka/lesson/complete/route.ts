@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { readSessionEmail } from "@/lib/tka/session";
+import { requireAccountEmail } from "@/lib/tka/session";
 import { completeLesson } from "@/lib/tka/service";
 import type { ItemOutcome } from "@/lib/tka/scoring";
 
 export async function POST(req: Request) {
-  const email = await readSessionEmail();
+  const email = await requireAccountEmail(req);
   if (!email) return NextResponse.json({ error: "auth" }, { status: 401 });
   const body = (await req.json().catch(() => null)) as {
     skillId?: string;
