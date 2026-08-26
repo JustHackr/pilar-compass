@@ -6,6 +6,7 @@ Web app for **Sekolah Pilar Indonesia** students to:
 2. Calculate a transparent university match % from Kurikulum Merdeka scores + context, with a short roadmap
 3. Practice TKA on a school account tied to your `@pilar.sch.id` email
 4. Practice OSN beside TKA (SD / SMP / SMA fields from the public archive, plus official Puspresnas PDFs). More fields can be added later from other sites.
+5. Browse official school textbooks for grades 4–12 from [SIBI Kemendikdasmen](https://buku.kemendikdasmen.go.id/) (Kurikulum Merdeka and K-13). PDFs stay on the ministry site; refresh the catalog with `npm run materi:scrape`.
 
 ## Quick start
 

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "osn:scrape": "node scripts/scrape-osn.mjs"
+    "osn:scrape": "node scripts/scrape-osn.mjs",
+    "materi:scrape": "node scripts/scrape-buku.mjs"
   },
   "dependencies": {
     "next": "16.2.12",

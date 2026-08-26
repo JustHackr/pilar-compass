@@ -1374,6 +1374,30 @@ select {
   color: var(--heading);
 }
 
+.materi-book-card {
+  min-height: 0;
+}
+
+.materi-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: calc(var(--radius-md) - 8px);
+  margin: 0 0 12px;
+  background: var(--line);
+}
+
+.materi-writer {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.materi-book-card .tka-actions {
+  margin: 12px 0 0;
+}
+
 .osn-filters {
   display: flex;
   flex-wrap: wrap;

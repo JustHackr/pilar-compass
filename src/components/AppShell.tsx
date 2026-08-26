@@ -46,6 +46,7 @@ export function AppShell({ email, onSignOut, children }: Props) {
     { href: "/", label: t("nav.home") },
     { href: "/tka", label: t("nav.tka") },
     { href: "/osn", label: t("nav.osn") },
+    { href: "/materi", label: t("nav.materi") },
     { href: "/competitions", label: t("nav.competitions") },
     { href: "/calculator", label: t("nav.calculator") },
     ...(isAdminEmail(email) ? [{ href: "/admin", label: t("nav.admin") }] : []),
