@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "osn:scrape": "node scripts/scrape-osn.mjs",
-    "materi:scrape": "node scripts/scrape-buku.mjs"
+    "materi:scrape": "node scripts/scrape-buku.mjs",
+    "competitions:scrape": "node scripts/scrape-puspresnas.mjs"
   },
   "dependencies": {
     "next": "16.2.12",

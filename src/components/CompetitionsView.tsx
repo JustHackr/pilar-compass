@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import competitionsData from "../../data/competitions.json";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Competition, CompetitionField, CompetitionScope } from "@/types";
 import {
   daysUntilDeadline,
@@ -11,8 +10,6 @@ import {
 import { getCompetitionLinks } from "@/lib/links";
 import type { CompetitionLinkKind } from "@/types";
 import { useLocale } from "@/lib/i18n/LocaleContext";
-
-const competitions = competitionsData.competitions as Competition[];
 
 const FIELD_KEYS = [
   "all",
@@ -52,10 +49,36 @@ export function CompetitionsView() {
   const [scope, setScope] = useState<CompetitionScope | "all">("all");
   const [openOnly, setOpenOnly] = useState(true);
   const [now, setNow] = useState(() => new Date());
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stale, setStale] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/competitions", { cache: "no-store" });
+      if (!res.ok) throw new Error("competitions");
+      const data = (await res.json()) as {
+        competitions?: Competition[];
+        live?: boolean;
+      };
+      setCompetitions(data.competitions ?? []);
+      setStale(data.live === false);
+      setNow(new Date());
+    } catch {
+      setStale(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const openCount = useMemo(
     () => competitions.filter((c) => isRegistrationOpen(c, now)).length,
-    [now],
+    [competitions, now],
   );
 
   const list = useMemo(
@@ -65,7 +88,7 @@ export function CompetitionsView() {
         { query, field, scope, openOnly },
         now,
       ),
-    [query, field, scope, openOnly, now],
+    [competitions, query, field, scope, openOnly, now],
   );
 
   const urgentCount = useMemo(
@@ -113,6 +136,8 @@ export function CompetitionsView() {
             <p className="eyebrow">{t("comps.eyebrow")}</p>
             <h1>{t("comps.title")}</h1>
             <p className="lede">{t("comps.lede")}</p>
+            <p className="result-count">{t("comps.source")}</p>
+            {stale ? <p className="tka-hint-line">{t("comps.loadError")}</p> : null}
           </div>
           <div className="stat-pills" aria-live="polite">
             <span className="stat-pill">
@@ -165,23 +190,21 @@ export function CompetitionsView() {
           />
           {t("comps.openOnly")}
         </label>
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={() => setNow(new Date())}
-        >
+        <button type="button" className="btn-secondary" onClick={() => void load()}>
           {t("comps.refresh")}
         </button>
       </div>
 
       <p className="result-count">
-        {t("comps.showing", {
-          count: list.length,
-          when: now.toLocaleString(),
-        })}
+        {loading
+          ? t("comps.loading")
+          : t("comps.showing", {
+              count: list.length,
+              when: now.toLocaleString(),
+            })}
       </p>
 
-      {list.length === 0 ? (
+      {loading ? null : list.length === 0 ? (
         <div className="empty-state">
           <h2>{t("comps.empty.title")}</h2>
           <p>{t("comps.empty.body")}</p>
@@ -215,9 +238,7 @@ export function CompetitionsView() {
                   <span>{t(`scope.${c.scope}`)}</span>
                   <span>{t(`field.${c.field}`)}</span>
                   <span>{levelLabel(c.level)}</span>
-                  <span>
-                    {t("comps.deadline", { date: c.registrationDeadline })}
-                  </span>
+                  <span>{t("comps.deadline", { date: c.registrationDeadline })}</span>
                 </div>
                 <p>{descriptionFor(c)}</p>
                 <div className="comp-actions">

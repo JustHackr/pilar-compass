@@ -11,7 +11,7 @@ const en: Dict = {
     "A student tool for Sekolah Pilar Indonesia. Sign in with your school email to find competitions, check university match, and practice TKA.",
   "tour.comps.title": "Find open competitions",
   "tour.comps.body":
-    "Browse Indonesian and international contests that are still open to register. Each card links to the announcement and registration — sorted by nearest deadline.",
+    "Browse official Puspresnas ajang talenta (OSN, OPSI, FIKSI, and other Ministry events). Each card links to the announcement and BPTI registration — sorted by nearest deadline.",
   "tour.calc.title": "Check your university match",
   "tour.calc.body":
     "Enter Kurikulum Merdeka scores (or upload a report photo), pick a target university, and get a transparent match % with a short roadmap. Switch EN / ID anytime in the top bar.",
@@ -274,10 +274,13 @@ const en: Dict = {
   "admin.event.tryout_submit": "Tryout submitted",
   "admin.event.logout": "Sign out",
 
-  "comps.eyebrow": "SPI · Grades 7–12",
+  "comps.eyebrow": "Puspresnas · Grades 7–12",
   "comps.title": "Competition finder",
   "comps.lede":
-    "Indonesian and international contests still open to register, sorted by nearest deadline.",
+    "Official Ministry ajang talenta from Puspresnas — OSN, OPSI, FIKSI, LKS, FLS3N, debate. The list refreshes itself from the national calendar.",
+  "comps.source": "Calendar: Pusat Prestasi Nasional. Registration via BPTI.",
+  "comps.loading": "Loading the official Puspresnas calendar…",
+  "comps.loadError": "Could not refresh Puspresnas. Showing the last saved calendar.",
   "comps.openNow": "open now",
   "comps.due7": "due in 7 days",
   "comps.search": "Search name, topic, tags…",
@@ -417,7 +420,7 @@ const id: Dict = {
     "Alat siswa untuk Sekolah Pilar Indonesia. Masuk dengan email sekolah untuk mencari kompetisi, cek kecocokan universitas, dan latihan TKA.",
   "tour.comps.title": "Temukan kompetisi yang masih buka",
   "tour.comps.body":
-    "Jelajahi lomba nasional dan internasional yang masih dibuka pendaftarannya. Setiap kartu mengarah ke pengumuman dan pendaftaran — diurutkan dari deadline terdekat.",
+    "Jelajahi ajang talenta resmi Puspresnas (OSN, OPSI, FIKSI, dan lomba Kementerian lain). Setiap kartu mengarah ke pengumuman dan pendaftaran BPTI — diurutkan dari deadline terdekat.",
   "tour.calc.title": "Cek kecocokan universitas",
   "tour.calc.body":
     "Masukkan nilai Kurikulum Merdeka (atau unggah foto rapor), pilih universitas tujuan, dan dapatkan persen kecocokan transparan plus roadmap singkat. Ganti EN / ID kapan saja di bilah atas.",
@@ -680,10 +683,13 @@ const id: Dict = {
   "admin.event.tryout_submit": "Tryout dikumpulkan",
   "admin.event.logout": "Keluar",
 
-  "comps.eyebrow": "SPI · Kelas 7–12",
+  "comps.eyebrow": "Puspresnas · Kelas 7–12",
   "comps.title": "Pencari kompetisi",
   "comps.lede":
-    "Lomba nasional dan internasional yang masih dibuka pendaftarannya, diurutkan dari deadline terdekat.",
+    "Ajang talenta resmi Kementerian dari Puspresnas — OSN, OPSI, FIKSI, LKS, FLS3N, debat. Daftar ini memperbarui sendiri dari kalender nasional.",
+  "comps.source": "Kalender: Pusat Prestasi Nasional. Pendaftaran lewat BPTI.",
+  "comps.loading": "Memuat kalender resmi Puspresnas…",
+  "comps.loadError": "Tidak bisa menyegarkan Puspresnas. Menampilkan kalender tersimpan terakhir.",
   "comps.openNow": "masih buka",
   "comps.due7": "deadline ≤ 7 hari",
   "comps.search": "Cari nama, topik, tag…",
