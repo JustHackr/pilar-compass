@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 250" width="460" height="250" role="img">
+  <rect width="460" height="250" fill="#ffffff"/>
+  <text x="280" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#002147">Trapesium siku-siku</text>
+  <polygon points="80,200 380,200 260,80 80,80" fill="#fdc800" stroke="#002147" stroke-width="2.5"/>
+  <text x="230" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#002147">10 cm</text>
+  <text x="170" y="68" text-anchor="middle" font-size="14" font-weight="700" fill="#002147">6 cm</text>
+  <line x1="60" y1="80" x2="60" y2="200" stroke="#444444" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="42" y="145" text-anchor="middle" font-size="14" font-weight="700" fill="#002147" transform="rotate(-90 42 145)">4 cm</text>
+  <path d="M 80 200 L 96 200 L 96 184" fill="none" stroke="#002147" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" role="img">
+  <rect width="480" height="300" fill="#ffffff"/>
+  <text x="280" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#002147">Tangga 6 m, sudut 60°</text>
+  <line x1="70" y1="250" x2="430" y2="250" stroke="#002147" stroke-width="3"/>
+  <line x1="70" y1="40" x2="70" y2="250" stroke="#002147" stroke-width="3"/>
+  <line x1="70" y1="70" x2="280" y2="250" stroke="#fdc800" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 120 250 A 50 50 0 0 0 95 207" fill="none" stroke="#002147" stroke-width="1.5"/>
+  <text x="138" y="238" font-size="14" font-weight="700" fill="#002147">60°</text>
+  <text x="200" y="140" font-size="14" font-weight="700" fill="#002147">6 m</text>
+  <line x1="40" y1="70" x2="40" y2="250" stroke="#444444" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="28" y="165" text-anchor="middle" font-size="13" fill="#444444" transform="rotate(-90 28 165)">h = ?</text>
+  <text x="250" y="272" font-size="12" fill="#6b7c8d">lantai</text>
+  <text x="82" y="56" font-size="12" fill="#6b7c8d">dinding</text>
+</svg>

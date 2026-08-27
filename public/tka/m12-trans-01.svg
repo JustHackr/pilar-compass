@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" width="600" height="330" role="img">
+  <rect width="600" height="330" fill="#ffffff"/>
+  <text x="300" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#002147">Desain 60 cm × 60 cm → layar 2,4 m × 1,8 m</text>
+  <rect x="40" y="70" width="120" height="120" fill="#fdc800" stroke="#002147" stroke-width="2"/>
+  <text x="100" y="132" text-anchor="middle" font-size="12" font-weight="700" fill="#002147">60 cm</text>
+  <text x="100" y="210" text-anchor="middle" font-size="12" fill="#6b7c8d">desain (1 : 1)</text>
+  <polygon points="180,130 210,130 198,122 198,138" fill="#002147"/>
+  <rect x="230" y="50" width="320" height="240" fill="#e8f0f8" stroke="#002147" stroke-width="2"/>
+  <text x="390" y="42" text-anchor="middle" font-size="12" fill="#444444">layar 2,4 m × 1,8 m</text>
+  <rect x="270" y="90" width="180" height="180" fill="#fdc800" stroke="#002147" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="360" y="184" text-anchor="middle" font-size="12" font-weight="700" fill="#002147">citra persegi</text>
+  <text x="390" y="308" text-anchor="middle" font-size="12" fill="#6b7c8d">pembesaran proporsional, orientasi horizontal</text>
+</svg>

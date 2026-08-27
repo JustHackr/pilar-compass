@@ -148,6 +148,7 @@ export const TRYOUT_PACKS: TryoutPack[] = [
       "en-o-15",
       "en-o-17",
       "en-o-18",
+      "en-o-20",
       "en-o-21",
       "en-o-22",
       "en-o-23",

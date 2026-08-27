@@ -259,6 +259,7 @@ export const GRADE12_EN_QUESTIONS: TkaQuestion[] = [
     skillId: "en-info",
     type: "pgk",
     source: "official",
+    image: "/tka/en-o-20.svg",
     stem: "Supported by clear data or facts in the text and table (more than one).",
     statements: [
       { id: "A", text: "45% of students save money regularly", correct: true },

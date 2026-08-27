@@ -8,6 +8,7 @@ import { tryoutById } from "@/data/tka/tryouts";
 import { tkaFetchInit } from "@/lib/tka/client";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 import { isPg, type LessonCheck, type PgkAnswer } from "@/lib/tka/scoring";
+import { TkaQuestionFigure } from "@/components/tka/TkaQuestionFigure";
 import { useTkaMe } from "@/components/tka/TkaGate";
 
 type Review = {
@@ -192,6 +193,7 @@ export default function TkaTryoutPage() {
         </button>
       </div>
       <p className="tka-stem">{q.stem}</p>
+      {q.image ? <TkaQuestionFigure src={q.image} alt={t("tka.figure")} /> : null}
       {isPg(q) ? (
         <ul className="tka-choices">
           {q.choices.map((c, i) => (

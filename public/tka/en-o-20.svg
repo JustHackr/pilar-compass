@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 252" width="360" height="252" role="img">
+  <rect width="360" height="252" fill="#ffffff"/>
+  <text x="180" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#002147">Student money habits (survey)</text>
+  <rect x="40" y="56" width="140" height="32" fill="#002147" stroke="#002147" stroke-width="1"/>
+  <text x="110" y="77" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Finding</text>
+  <rect x="180" y="56" width="140" height="32" fill="#002147" stroke="#002147" stroke-width="1"/>
+  <text x="250" y="77" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Share / note</text>
+  <rect x="40" y="88" width="140" height="32" fill="#ffffff" stroke="#002147" stroke-width="1"/>
+  <text x="110" y="109" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">Save money regularly</text>
+  <rect x="180" y="88" width="140" height="32" fill="#ffffff" stroke="#002147" stroke-width="1"/>
+  <text x="250" y="109" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">45%</text>
+  <rect x="40" y="120" width="140" height="32" fill="#e8f0f8" stroke="#002147" stroke-width="1"/>
+  <text x="110" y="141" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">Track expenses (notebook or app)</text>
+  <rect x="180" y="120" width="140" height="32" fill="#e8f0f8" stroke="#002147" stroke-width="1"/>
+  <text x="250" y="141" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">62%</text>
+  <rect x="40" y="152" width="140" height="32" fill="#ffffff" stroke="#002147" stroke-width="1"/>
+  <text x="110" y="173" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">Save about 10% of allowance</text>
+  <rect x="180" y="152" width="140" height="32" fill="#ffffff" stroke="#002147" stroke-width="1"/>
+  <text x="250" y="173" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">good practice</text>
+  <rect x="40" y="184" width="140" height="32" fill="#e8f0f8" stroke="#002147" stroke-width="1"/>
+  <text x="110" y="205" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">Spend more than planned</text>
+  <rect x="180" y="184" width="140" height="32" fill="#e8f0f8" stroke="#002147" stroke-width="1"/>
+  <text x="250" y="205" text-anchor="middle" font-size="12" font-weight="400" fill="#444444">29%</text>
+  <text x="180" y="240" text-anchor="middle" font-size="12" fill="#6b7c8d">Table from the sample text · tracking helps spending habits</text>
+</svg>

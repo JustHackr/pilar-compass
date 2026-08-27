@@ -274,6 +274,7 @@ export const GRADE12_KIMIA_QUESTIONS: TkaQuestion[] = [
     skillId: "ikatan",
     type: "pg",
     source: "latihan",
+    image: "/tka/k12-l-03.svg",
     stem: "Manakah yang nonpolar: AX4E0 tetrahedral; AX4E2 segiempat datar; AX2E3 linier? (ligan sama)",
     choices: [
       "Tepat, tepat, tepat",

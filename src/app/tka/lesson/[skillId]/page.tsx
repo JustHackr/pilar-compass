@@ -21,6 +21,7 @@ import {
   type PgkAnswer,
   type TkaQuestion,
 } from "@/lib/tka/scoring";
+import { TkaQuestionFigure } from "@/components/tka/TkaQuestionFigure";
 import { useTkaMe } from "@/components/tka/TkaGate";
 
 export default function TkaLessonPage() {
@@ -179,6 +180,9 @@ export default function TkaLessonPage() {
         <p>{locale === "id" ? skill.materialId : skill.materialEn}</p>
       </details>
       <p className="tka-stem">{question.stem}</p>
+      {question.image ? (
+        <TkaQuestionFigure src={question.image} alt={t("tka.figure")} />
+      ) : null}
       {question.source ? (
         <p className="tka-source">
           {t(

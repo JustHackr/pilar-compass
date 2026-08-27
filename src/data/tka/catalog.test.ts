@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { GRADE12_WAJIB, PILIHAN_SUBJECTS, isPlayableSubject } from "@/data/tka/catalog";
 import { TRYOUT_PACKS } from "@/data/tka/tryouts";
@@ -5,6 +7,28 @@ import { questionById, questionsForSubject, skillById } from "@/data/tka/bank";
 import { ALL_TKA_SKILLS } from "@/data/tka/skills";
 import { TKA_PAPERS } from "@/data/tka/sources";
 import { pickLessonItems } from "@/lib/tka/lessonEngine";
+
+const FIGURE_QUESTION_IDS = [
+  "m12-data-01",
+  "m12-fungsi-01",
+  "m12-trig-01",
+  "m12-volume-01",
+  "m12-luas-01",
+  "m12-geo-01",
+  "m12-trans-01",
+  "m12-pl-01",
+  "k12-l-03",
+  "m9-o-04",
+  "m9-o-29",
+  "en-o-20",
+  "m6-b-02",
+  "m6-l-03",
+  "m6-l-04",
+  "m6-l-08",
+  "m9-b-02",
+  "m9-l-08",
+  "m9-l-09",
+] as const;
 
 describe("tka catalog", () => {
   it("opens grade 6 and 9 language/math plus grade 12 wajib and eight electives", () => {
@@ -70,6 +94,25 @@ describe("tka catalog", () => {
         expect(skill).toBeTruthy();
         expect(skill?.subjectId).toBe(pack.subjectId);
         expect(skill?.track ?? "12").toBe(pack.track);
+      }
+    }
+  });
+
+  it("prints a graph or table on items that need a figure", () => {
+    for (const id of FIGURE_QUESTION_IDS) {
+      const q = questionById(id);
+      expect(q?.image, id).toBe(`/tka/${id}.svg`);
+      const file = join(process.cwd(), "public", "tka", `${id}.svg`);
+      expect(existsSync(file), file).toBe(true);
+    }
+  });
+
+  it("keeps every question image file on disk", () => {
+    for (const skill of ALL_TKA_SKILLS) {
+      for (const q of questionsForSubject(skill.subjectId, skill.track ?? "12")) {
+        if (!q.image) continue;
+        const file = join(process.cwd(), "public", q.image.replace(/^\//, ""));
+        expect(existsSync(file), `${q.id} → ${file}`).toBe(true);
       }
     }
   });

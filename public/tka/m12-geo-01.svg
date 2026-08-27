@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 290" width="560" height="290" role="img">
+  <rect width="560" height="290" fill="#ffffff"/>
+  <text x="280" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#002147">Dua garis sejajar + transversal</text>
+  <line x1="60" y1="90" x2="500" y2="90" stroke="#002147" stroke-width="3"/>
+  <line x1="60" y1="200" x2="500" y2="200" stroke="#002147" stroke-width="3"/>
+  <line x1="140" y1="40" x2="380" y2="250" stroke="#fdc800" stroke-width="3"/>
+  <text x="188" y="128" font-size="14" font-weight="700" fill="#002147">70°</text>
+  <text x="268" y="188" font-size="14" font-weight="700" fill="#002147">?</text>
+  <text x="510" y="94" font-size="13" fill="#444444">l₁</text>
+  <text x="510" y="204" font-size="13" fill="#444444">l₂</text>
+  <text x="80" y="270" font-size="12" fill="#6b7c8d">sudut dalam sepihak</text>
+</svg>

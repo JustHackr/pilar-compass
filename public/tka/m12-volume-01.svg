@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 280" width="460" height="280" role="img">
+  <rect width="460" height="280" fill="#ffffff"/>
+  <text x="280" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#002147">Balok 8 cm × 5 cm × 4 cm</text>
+  <polygon points="120,120 280,120 340,80 180,80" fill="#e8f0f8" stroke="#002147" stroke-width="2"/>
+  <polygon points="280,120 340,80 340,180 280,220" fill="#dce6f0" stroke="#002147" stroke-width="2"/>
+  <polygon points="120,120 280,120 280,220 120,220" fill="#fdc800" stroke="#002147" stroke-width="2"/>
+  <text x="200" y="238" text-anchor="middle" font-size="14" font-weight="700" fill="#002147">8 cm</text>
+  <text x="80" y="175" text-anchor="middle" font-size="14" font-weight="700" fill="#002147" transform="rotate(-90 80 175)">4 cm</text>
+  <text x="330" y="240" font-size="14" font-weight="700" fill="#002147">5 cm</text>
+</svg>

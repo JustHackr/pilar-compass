@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 190" width="460" height="190" role="img">
+  <rect width="460" height="190" fill="#ffffff"/>
+  <text x="230" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#002147">Persegi panjang 20 cm × 5 cm</text>
+  <rect x="90.0" y="70.0" width="280.0" height="70.0" fill="#fdc800" stroke="#002147" stroke-width="2.5"/>
+  <text x="230" y="164.0" text-anchor="middle" font-size="14" font-weight="700" fill="#002147">20 cm</text>
+  <text x="72.0" y="105.0" text-anchor="middle" font-size="14" font-weight="700" fill="#002147" transform="rotate(-90 72.0 105.0)">5 cm</text>
+</svg>

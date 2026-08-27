@@ -1374,6 +1374,23 @@ select {
   color: var(--heading);
 }
 
+.tka-figure {
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.tka-figure img {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0 auto;
+}
+
 .materi-book-card {
   min-height: 0;
 }
