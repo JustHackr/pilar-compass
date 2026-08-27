@@ -73,6 +73,7 @@ export const GRADE12_EN_QUESTIONS: TkaQuestion[] = [
     skillId: "en-message",
     type: "pgk",
     source: "official",
+    image: "/tka/en-study-tips.svg",
     stem: "Study-tips text: author’s purpose (more than one).",
     statements: [
       { id: "A", text: "To help students find fun strategies to play after studying", correct: false },
@@ -89,6 +90,7 @@ export const GRADE12_EN_QUESTIONS: TkaQuestion[] = [
     skillId: "en-info",
     type: "pgk",
     source: "official",
+    image: "/tka/en-study-tips.svg",
     stem: "Techniques you can implement in personal study time (more than one).",
     statements: [
       { id: "A", text: "Only study when you are in a group discussion", correct: false },

@@ -1463,6 +1463,49 @@ select {
   margin-bottom: 16px;
 }
 
+.tka-passage {
+  margin: 0 0 24px;
+  padding: 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.tka-passage-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.tka-passage-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.tka-passage p {
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--heading);
+}
+
+.tka-passage p:last-child {
+  margin-bottom: 0;
+}
+
+.tka-passage-note {
+  font-size: 14px;
+  line-height: 20px;
+  color: #4a5a6a;
+}
+
 .tka-stem {
   font-size: 18px;
   line-height: 1.6;
@@ -1481,7 +1524,7 @@ select {
 .tka-figure img {
   display: block;
   width: 100%;
-  max-width: 560px;
+  max-width: 640px;
   height: auto;
   margin: 0 auto;
 }

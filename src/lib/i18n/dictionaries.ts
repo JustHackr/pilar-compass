@@ -218,6 +218,7 @@ const en: Dict = {
   "tka.days": "{n} days",
   "tka.source.official": "From the sample official paper",
   "tka.source.latihan": "Practice item",
+  "tka.passage": "Reading text",
   "tka.figure": "Question figure",
 
   "admin.eyebrow": "School operations",
@@ -648,6 +649,7 @@ const id: Dict = {
   "tka.days": "{n} hari",
   "tka.source.official": "Dari contoh naskah resmi",
   "tka.source.latihan": "Soal latihan",
+  "tka.passage": "Bacaan",
   "tka.figure": "Gambar soal",
 
   "admin.eyebrow": "Operasi sekolah",

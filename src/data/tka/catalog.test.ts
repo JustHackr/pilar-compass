@@ -3,7 +3,13 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { GRADE12_WAJIB, PILIHAN_SUBJECTS, isPlayableSubject } from "@/data/tka/catalog";
 import { TRYOUT_PACKS } from "@/data/tka/tryouts";
-import { questionById, questionsForSubject, skillById } from "@/data/tka/bank";
+import {
+  figureForQuestion,
+  passageForQuestion,
+  questionById,
+  questionsForSubject,
+  skillById,
+} from "@/data/tka/bank";
 import { ALL_TKA_SKILLS } from "@/data/tka/skills";
 import { TKA_PAPERS } from "@/data/tka/sources";
 import { pickLessonItems } from "@/lib/tka/lessonEngine";
@@ -115,5 +121,53 @@ describe("tka catalog", () => {
         expect(existsSync(file), `${q.id} → ${file}`).toBe(true);
       }
     }
+  });
+
+  it("shows the original TKA 2025 reading passage on official language items", () => {
+    const needed: Record<string, string> = {
+      "bi-o-01": "buwuhan",
+      "bi-o-02": "buwuhan",
+      "bi-o-03": "buwuhan",
+      "bi-o-05": "layur",
+      "bi-o-06": "layur",
+      "bi-o-09": "pantai-bersih",
+      "bi-o-10": "pantai-bersih",
+      "bi-o-11": "sampah-ekosistem",
+      "bi-o-12": "sampah-ekosistem",
+      "bi-o-13": "sampah-ekosistem",
+      "bi-o-14": "ekonomi-global",
+      "bi-o-17": "tari-hudoq",
+      "bi-o-21": "roh-meratus",
+      "bi-o-24": "roh-meratus",
+      "bi-o-25": "belis",
+      "bi-o-28": "belis",
+      "en-o-01": "lion-mouse",
+      "en-o-02": "lion-mouse",
+      "en-o-03": "lion-mouse",
+      "en-o-09": "study-tips",
+      "en-o-10": "study-tips",
+      "en-o-11": "great-barrier-reef",
+      "en-o-15": "great-barrier-reef",
+      "en-o-16a": "teen-money",
+      "en-o-20": "teen-money",
+      "en-o-21": "hera-shero",
+      "en-o-25": "hera-shero",
+    };
+    for (const [id, passageId] of Object.entries(needed)) {
+      const q = questionById(id);
+      expect(q, id).toBeTruthy();
+      const passage = passageForQuestion(q!);
+      expect(passage?.id, id).toBe(passageId);
+      expect(passage?.body.length, passageId).toBeGreaterThan(350);
+    }
+    expect(passageForQuestion(questionById("bi-o-01")!)?.body).toContain("hajatan");
+    expect(passageForQuestion(questionById("en-o-01")!)?.body).toMatch(/chew|net/i);
+    expect(figureForQuestion(questionById("en-o-16a")!)).toBe("/tka/en-o-20.svg");
+  });
+
+  it("prints the study-tips infographic that the English items ask about", () => {
+    const study = questionById("en-o-09");
+    expect(study?.image).toBe("/tka/en-study-tips.svg");
+    expect(existsSync(join(process.cwd(), "public/tka/en-study-tips.svg"))).toBe(true);
   });
 });

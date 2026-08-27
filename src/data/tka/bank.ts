@@ -14,6 +14,8 @@ import { ALL_TKA_SKILLS, type TkaSkill } from "@/data/tka/skills";
 import type { TkaTrack } from "@/lib/tka/grade";
 import type { TkaQuestion } from "@/lib/tka/scoring";
 
+export { figureForQuestion, passageForQuestion } from "@/data/tka/passages";
+
 const ALL_QUESTIONS: TkaQuestion[] = [
   ...GRADE12_MATH_QUESTIONS,
   ...GRADE12_KIMIA_QUESTIONS,
