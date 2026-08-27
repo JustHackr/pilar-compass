@@ -26,7 +26,7 @@ import { useTkaMe } from "@/components/tka/TkaGate";
 
 export default function TkaLessonPage() {
   const { t, locale } = useLocale();
-  const { reload } = useTkaMe();
+  const { me, reload } = useTkaMe();
   const params = useParams<{ skillId: string }>();
   const skill = skillById(params.skillId);
 
@@ -58,6 +58,7 @@ export default function TkaLessonPage() {
     null,
   );
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const currentId = queue[0];
   const question = currentId ? byId.get(currentId) : undefined;
@@ -112,7 +113,8 @@ export default function TkaLessonPage() {
     setFeedback(null);
     if (nextQueue.length === 0) {
       setSaving(true);
-      await fetch(
+      setSaveError(false);
+      const res = await fetch(
         "/api/tka/lesson/complete",
         tkaFetchInit({
           method: "POST",
@@ -121,9 +123,16 @@ export default function TkaLessonPage() {
             skillId: skill?.id,
             xp: xpRef.current + XP_LESSON_BONUS,
             outcomes: outcomesRef.current,
+            snapshot: me,
           }),
         }),
       );
+      if (!res.ok) {
+        setSaving(false);
+        setSaveError(true);
+        setPhase("done");
+        return;
+      }
       await reload();
       setSaving(false);
       setPhase("done");
@@ -146,6 +155,7 @@ export default function TkaLessonPage() {
       <div className="page-wrap tka-page">
         <h1>{t("tka.lessonDone")}</h1>
         <p className="lede">XP +{xp + XP_LESSON_BONUS}</p>
+        {saveError ? <p className="field-error">{t("tka.lessonSaveError")}</p> : null}
         <div className="tka-actions">
           <button
             type="button"

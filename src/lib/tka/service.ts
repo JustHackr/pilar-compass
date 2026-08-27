@@ -7,6 +7,7 @@ import { scoreOsnPaper } from "@/lib/osn/scoring";
 import { isPilihanId } from "@/data/tka/catalog";
 import type { OsnQuestion } from "@/data/osn/types";
 import { isAdminEmail, matchSpiClass } from "@/data/spi-classes";
+import { isDemoSeedEmail, isHiddenLeaderboardName } from "./demo";
 import { isTkaTrack, normalizeKelas, type TkaTrack } from "./grade";
 import { gradeItem, monthlyActivityScore, type LessonCheck } from "./scoring";
 import { applyQualifyingActivity } from "./streak";
@@ -238,10 +239,19 @@ export async function completeLesson(input: {
   skillId: string;
   xp: number;
   outcomes: Record<string, import("./scoring").ItemOutcome>;
+  snapshot?: TkaPublicMe | null;
 }) {
+  const email = emailKey(input.email);
   const today = wibDateStr();
   return mutateStore((db) => {
-    const profile = db.profiles[input.email];
+    let profile = db.profiles[email];
+    const snap = input.snapshot;
+    if (!profile?.onboardingCompletedAt && snap?.profile?.onboardingCompletedAt) {
+      if (emailKey(snap.email) === email) {
+        profile = { ...snap.profile, email };
+        db.profiles[email] = profile;
+      }
+    }
     if (!profile?.onboardingCompletedAt) return { ok: false as const, error: "onboarding" };
     const xp = Math.max(0, Math.min(500, Math.floor(input.xp)));
     const streak = applyQualifyingActivity(
@@ -250,14 +260,14 @@ export async function completeLesson(input: {
     );
     profile.streakCount = streak.streakCount;
     profile.streakLastDate = streak.streakLastDate;
-    bumpDaily(db.daily, input.email, today, {
+    bumpDaily(db.daily, email, today, {
       lessonsCompleted: 1,
       xpEarned: xp,
       streakCounted: true,
     });
     db.lessons.push({
       id: randomUUID(),
-      email: input.email,
+      email,
       skillId: input.skillId,
       finishedAt: new Date().toISOString(),
       xp,
@@ -266,14 +276,14 @@ export async function completeLesson(input: {
     const firstTries = Object.values(input.outcomes).filter((o) => o === "first_try").length;
     const total = Object.keys(input.outcomes).length;
     const status = total > 0 && firstTries / total >= 0.8 ? "mastered" : "learning";
-    db.mastery[masteryKey(input.email, input.skillId)] = {
-      email: input.email,
+    db.mastery[masteryKey(email, input.skillId)] = {
+      email,
       skillId: input.skillId,
       status,
       updatedAt: new Date().toISOString(),
     };
     pushEvent(db, {
-      email: input.email,
+      email,
       type: "lesson_complete",
       detail: `${input.skillId} · ${xp} XP · ${status}`,
       meta: { skillId: input.skillId, xp, status },
@@ -390,11 +400,7 @@ export async function submitOsnPaper(input: {
   });
 }
 
-const PUBLIC_LEADERBOARD_NAMES = new Set(["quasarian insanity", "pilar admin"]);
-
-function isPublicLeaderboardName(name: string): boolean {
-  return PUBLIC_LEADERBOARD_NAMES.has(name.trim().toLowerCase());
-}
+const BOARD_HIDDEN_EMAILS = new Set(["quasarian.insanity@pilar.sch.id"]);
 
 export async function leaderboard(scope: "school" | "class", kelas?: string) {
   const db = await readStore();
@@ -407,7 +413,9 @@ export async function leaderboard(scope: "school" | "class", kelas?: string) {
   }
   const rows = Object.values(db.profiles)
     .filter((p) => p.onboardingCompletedAt)
-    .filter((p) => isPublicLeaderboardName(p.displayName))
+    .filter((p) => !isDemoSeedEmail(p.email))
+    .filter((p) => !BOARD_HIDDEN_EMAILS.has(emailKey(p.email)))
+    .filter((p) => !isHiddenLeaderboardName(p.displayName))
     .filter((p) => (scope === "class" ? p.kelas === normalizeKelas(kelas || "") : true))
     .map((p) => ({
       displayName: p.displayName,

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEMO_STUDENT_EMAIL } from "./demo";
 import {
+  completeLesson,
   leaderboard,
   publicMe,
   restoreStudentSnapshot,
@@ -14,33 +15,95 @@ describe("leaderboard", () => {
     resetStoreForTests();
   });
 
-  it("only publishes Quasarian Insanity and Pilar Admin", async () => {
+  it("lists a real student after they finish a lesson", async () => {
+    const email = "ada@pilar.sch.id";
+    const saved = await saveOnboarding(email, {
+      displayName: "Ada",
+      age: 17,
+      tkaTrack: "12",
+      kelas: "12-RIO-DE-JANEIRO",
+      pilihanIds: ["fisika", "kimia"],
+    });
+    expect(saved.ok).toBe(true);
+
+    const done = await completeLesson({
+      email,
+      skillId: "spl",
+      xp: 40,
+      outcomes: { q1: "first_try" },
+    });
+    expect(done.ok).toBe(true);
+
     const rows = await leaderboard("school");
-    expect(rows.map((r) => r.displayName).sort()).toEqual([
-      "Pilar Admin",
-      "Quasarian Insanity",
-    ]);
-    expect(rows.every((r) => r.score === 0 && r.streakCount === 0)).toBe(true);
+    const ada = rows.find((r) => r.displayName === "Ada");
+    expect(ada).toBeTruthy();
+    expect(ada?.score).toBeGreaterThan(0);
+    expect(ada?.streakCount).toBeGreaterThan(0);
   });
 
-  it("wipes everyone else even if they have activity", async () => {
+  it("hides demo roster names and Quasarian Insanity", async () => {
     const today = wibDateStr();
     await mutateStore((db) => {
-      const extra = db.profiles["rina.12-rio-de-janeiro@pilar.sch.id"];
+      const extra = db.profiles[DEMO_STUDENT_EMAIL];
       if (extra) extra.streakCount = 12;
       db.daily.push({
-        email: "rina.12-rio-de-janeiro@pilar.sch.id",
+        email: DEMO_STUDENT_EMAIL,
         date: today,
         lessonsCompleted: 9,
         tryoutsSubmitted: 3,
         xpEarned: 200,
         streakCounted: true,
       });
+      db.profiles["quasarian.insanity@pilar.sch.id"] = {
+        email: "quasarian.insanity@pilar.sch.id",
+        displayName: "Quasarian Insanity",
+        age: 18,
+        tkaTrack: "12",
+        kelas: "12-RIO-DE-JANEIRO",
+        pilihanIds: ["fisika", "kimia"],
+        onboardingCompletedAt: "2026-08-01T00:00:00.000Z",
+        streakCount: 9,
+        streakLastDate: today,
+      };
     });
 
     const rows = await leaderboard("school");
     expect(rows.map((r) => r.displayName)).not.toContain("Rina Rio De Janeiro");
-    expect(rows).toHaveLength(2);
+    expect(rows.map((r) => r.displayName)).not.toContain("Quasarian Insanity");
+    expect(rows.map((r) => r.displayName)).not.toContain("Pilar Admin");
+  });
+});
+
+describe("completeLesson", () => {
+  beforeEach(() => {
+    resetStoreForTests();
+  });
+
+  it("saves the lesson when the server forgot the profile but the client still has it", async () => {
+    const email = "ada@pilar.sch.id";
+    await saveOnboarding(email, {
+      displayName: "Ada",
+      age: 17,
+      tkaTrack: "12",
+      kelas: "12-RIO-DE-JANEIRO",
+      pilihanIds: ["fisika", "kimia"],
+    });
+    const me = await publicMe(email);
+    await mutateStore((db) => {
+      delete db.profiles[email];
+    });
+
+    const done = await completeLesson({
+      email,
+      skillId: "spl",
+      xp: 40,
+      outcomes: { q1: "first_try" },
+      snapshot: me,
+    });
+    expect(done.ok).toBe(true);
+
+    const rows = await leaderboard("school");
+    expect(rows.some((r) => r.displayName === "Ada" && r.score > 0)).toBe(true);
   });
 });
 

@@ -14,6 +14,7 @@ describe("demo TKA school", () => {
     expect(overview.kpis.classesWithStudents).toBe(SPI_CLASSES.length);
     expect(db.profiles[ADMIN_EMAIL]?.onboardingCompletedAt).toBeTruthy();
     expect(db.profiles[DEMO_STUDENT_EMAIL]?.kelas).toBe("12-RIO-DE-JANEIRO");
+    expect(db.profiles["quasarian.insanity@pilar.sch.id"]).toBeUndefined();
   });
 
   it("starts everyone at zero on the leaderboard", () => {
