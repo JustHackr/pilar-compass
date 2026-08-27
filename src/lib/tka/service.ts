@@ -7,7 +7,13 @@ import { isTkaTrack, normalizeKelas, type TkaTrack } from "./grade";
 import { gradeItem, monthlyActivityScore, type LessonCheck } from "./scoring";
 import { applyQualifyingActivity } from "./streak";
 import { mutateStore, readStore } from "./store";
-import { masteryKey, type ActivityEvent, type DailyActivity, type TkaProfile } from "./types";
+import {
+  masteryKey,
+  type ActivityEvent,
+  type DailyActivity,
+  type TkaProfile,
+  type TkaPublicMe,
+} from "./types";
 import { pushEvent } from "./admin";
 import { wibDateStr } from "./wib";
 
@@ -77,6 +83,67 @@ export async function publicMe(email: string) {
     monthScore,
     mastery: Object.values(db.mastery).filter((m) => m.email === email),
   };
+}
+
+export async function restoreStudentSnapshot(
+  email: string,
+  snapshot: TkaPublicMe,
+): Promise<void> {
+  const key = emailKey(email);
+  if (emailKey(snapshot.email) !== key) return;
+  const profile = snapshot.profile;
+  if (!profile?.onboardingCompletedAt) return;
+
+  await mutateStore((db) => {
+    const current = db.profiles[key];
+    const laterDate = (a: string | null | undefined, b: string | null | undefined) =>
+      (a ?? "") >= (b ?? "") ? (a ?? null) : (b ?? null);
+    db.profiles[key] = {
+      ...profile,
+      email: key,
+      streakCount: Math.max(current?.streakCount ?? 0, profile.streakCount),
+      streakLastDate: laterDate(current?.streakLastDate, profile.streakLastDate),
+      onboardingCompletedAt:
+        current?.onboardingCompletedAt ?? profile.onboardingCompletedAt,
+    };
+    for (const m of snapshot.mastery) {
+      if (emailKey(m.email) !== key) continue;
+      const id = masteryKey(key, m.skillId);
+      const prev = db.mastery[id];
+      if (
+        !prev ||
+        prev.updatedAt <= m.updatedAt ||
+        (m.status === "mastered" && prev.status !== "mastered")
+      ) {
+        db.mastery[id] = { ...m, email: key };
+      }
+    }
+    const today = wibDateStr();
+    const cachedToday = snapshot.today;
+    if (
+      cachedToday.lessonsCompleted ||
+      cachedToday.tryoutsSubmitted ||
+      cachedToday.xpEarned ||
+      cachedToday.streakCounted
+    ) {
+      const row = db.daily.find((d) => d.email === key && d.date === today);
+      if (!row) {
+        db.daily.push({
+          email: key,
+          date: today,
+          lessonsCompleted: cachedToday.lessonsCompleted,
+          tryoutsSubmitted: cachedToday.tryoutsSubmitted,
+          xpEarned: cachedToday.xpEarned,
+          streakCounted: cachedToday.streakCounted,
+        });
+      } else {
+        row.lessonsCompleted = Math.max(row.lessonsCompleted, cachedToday.lessonsCompleted);
+        row.tryoutsSubmitted = Math.max(row.tryoutsSubmitted, cachedToday.tryoutsSubmitted);
+        row.xpEarned = Math.max(row.xpEarned, cachedToday.xpEarned);
+        row.streakCounted = row.streakCounted || cachedToday.streakCounted;
+      }
+    }
+  });
 }
 
 export async function saveOnboarding(
@@ -262,6 +329,12 @@ export async function submitTryout(input: {
   });
 }
 
+const PUBLIC_LEADERBOARD_NAMES = new Set(["quasarian insanity", "pilar admin"]);
+
+function isPublicLeaderboardName(name: string): boolean {
+  return PUBLIC_LEADERBOARD_NAMES.has(name.trim().toLowerCase());
+}
+
 export async function leaderboard(scope: "school" | "class", kelas?: string) {
   const db = await readStore();
   const today = wibDateStr();
@@ -273,6 +346,7 @@ export async function leaderboard(scope: "school" | "class", kelas?: string) {
   }
   const rows = Object.values(db.profiles)
     .filter((p) => p.onboardingCompletedAt)
+    .filter((p) => isPublicLeaderboardName(p.displayName))
     .filter((p) => (scope === "class" ? p.kelas === normalizeKelas(kelas || "") : true))
     .map((p) => ({
       displayName: p.displayName,

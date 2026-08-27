@@ -91,4 +91,23 @@ describe("preferOnboardedMe", () => {
     expect(next.profile?.onboardingCompletedAt).toBeTruthy();
     expect(next.profile?.streakCount).toBe(4);
   });
+
+  it("does not let an empty server dashboard erase cached XP and streak", () => {
+    const cached = {
+      ...me("justin.rizki@pilar.sch.id", true, 4),
+      monthXp: 80,
+      monthScore: 3,
+      today: {
+        lessonsCompleted: 2,
+        tryoutsSubmitted: 0,
+        xpEarned: 40,
+        streakCounted: true,
+      },
+    };
+    const server = me("justin.rizki@pilar.sch.id", true, 0);
+    const next = preferOnboardedMe(server, cached);
+    expect(next.profile?.streakCount).toBe(4);
+    expect(next.monthXp).toBe(80);
+    expect(next.today.lessonsCompleted).toBe(2);
+  });
 });

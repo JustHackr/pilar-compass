@@ -503,10 +503,10 @@ export const GRADE9_MATH_SKILLS: TkaSkill[] = [
     id: "m9-data",
     subjectId: "matematika",
     track: "9",
-    titleEn: "Median",
-    titleId: "Median",
-    materialEn: "Sort first. Median is the middle value. For an even count, average the two middles.",
-    materialId: "Urutkan dulu. Median = nilai tengah. Jika genap, rata-rata dua nilai tengah.",
+    titleEn: "Median and mean",
+    titleId: "Median dan rata-rata",
+    materialEn: "Sort first. Median is the middle value. For an even count, average the two middles. Mean = sum / n.",
+    materialId: "Urutkan dulu. Median = nilai tengah. Jika genap, rata-rata dua nilai tengah. Rata-rata = jumlah / n.",
   },
 ];
 

@@ -109,17 +109,30 @@ export function TkaGate({
     const server = (await res.json()) as TkaMe;
     if (seq !== loadSeq.current) return;
     let data = keepFinishedMe(email || server.email, cached, server);
-    if (cached?.profile?.onboardingCompletedAt && !server.profile?.onboardingCompletedAt) {
-      const restored = await restoreServerProfile(cached);
+    const cachedAhead =
+      Boolean(cached?.profile?.onboardingCompletedAt) &&
+      ((cached?.monthXp ?? 0) > (server.monthXp ?? 0) ||
+        (cached?.profile?.streakCount ?? 0) > (server.profile?.streakCount ?? 0) ||
+        !server.profile?.onboardingCompletedAt);
+    if (cachedAhead && cached) {
+      if (!server.profile?.onboardingCompletedAt) {
+        await restoreServerProfile(cached);
+      }
+      await fetch(
+        "/api/tka/progress/restore",
+        tkaFetchInit({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cached),
+        }),
+      );
       if (seq !== loadSeq.current) return;
-      if (restored) {
-        const again = await fetch("/api/tka/me", {
-          ...tkaFetchInit(),
-          cache: "no-store",
-        });
-        if (again.ok) {
-          data = keepFinishedMe(email || server.email, cached, (await again.json()) as TkaMe);
-        }
+      const again = await fetch("/api/tka/me", {
+        ...tkaFetchInit(),
+        cache: "no-store",
+      });
+      if (again.ok) {
+        data = keepFinishedMe(email || server.email, cached, (await again.json()) as TkaMe);
       }
     }
     if (data.profile?.onboardingCompletedAt) {

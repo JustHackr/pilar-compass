@@ -2,6 +2,7 @@ import { SPI_CLASSES, isAdminEmail, matchSpiClass, type SpiClass } from "@/data/
 import { ALL_TKA_SKILLS } from "@/data/tka/skills";
 import { TRYOUT_PACKS } from "@/data/tka/tryouts";
 import { monthlyActivityScore } from "./scoring";
+import { persistToDisk, usesPostgres } from "./store";
 import type { ActivityEvent, TkaDb, TkaProfile } from "./types";
 import { wibDateStr } from "./wib";
 
@@ -177,6 +178,7 @@ export function buildAdminOverview(db: TkaDb) {
     generatedAt: new Date().toISOString(),
     today,
     demoStore: true,
+    persistStore: persistToDisk() || usesPostgres(),
     kpis: {
       accounts: profiles.length,
       onboarded: onboarded.length,

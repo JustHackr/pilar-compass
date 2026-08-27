@@ -209,7 +209,9 @@ const en: Dict = {
   "admin.refresh": "Refresh now",
   "admin.generated": "Updated {when} · WIB date {today}",
   "admin.demoStore":
-    "Demo school data: every homeroom already has students, lessons, tryouts, and a 14-day trend. Sign in as admin@pilar.sch.id or a seeded student email such as rina.12-rio-de-janeiro@pilar.sch.id. Nothing is saved to a database.",
+    "Demo school data: every homeroom already has students. Sign in as admin@pilar.sch.id or a seeded student email such as rina.12-rio-de-janeiro@pilar.sch.id.",
+  "admin.savedStore":
+    "Student TKA lessons, streaks, and XP are saved. Demo homerooms still appear here so every class has a roster.",
   "admin.loadError": "Could not load the dashboard.",
   "admin.verify.eyebrow": "Pilar Compass admin",
   "admin.forbidden.title": "Admin only",
@@ -618,7 +620,9 @@ const id: Dict = {
   "admin.refresh": "Segarkan",
   "admin.generated": "Diperbarui {when} · Tanggal WIB {today}",
   "admin.demoStore":
-    "Data sekolah demo: setiap kelas sudah berisi siswa, pelajaran, tryout, dan tren 14 hari. Masuk sebagai admin@pilar.sch.id atau email siswa contoh rina.12-rio-de-janeiro@pilar.sch.id. Tidak ada basis data.",
+    "Data sekolah demo: setiap kelas sudah berisi siswa. Masuk sebagai admin@pilar.sch.id atau email siswa contoh rina.12-rio-de-janeiro@pilar.sch.id.",
+  "admin.savedStore":
+    "Pelajaran TKA, streak, dan XP siswa disimpan. Roster demo tetap tampil di sini agar setiap kelas punya daftar siswa.",
   "admin.loadError": "Dasbor tidak dapat dimuat.",
   "admin.verify.eyebrow": "Admin Pilar Compass",
   "admin.forbidden.title": "Khusus admin",

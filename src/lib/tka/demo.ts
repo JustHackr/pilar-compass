@@ -107,6 +107,18 @@ export function demoDb(now: Date = new Date()): TkaDb {
     streakLastDate: null,
   };
 
+  db.profiles["quasarian.insanity@pilar.sch.id"] = {
+    email: "quasarian.insanity@pilar.sch.id",
+    displayName: "Quasarian Insanity",
+    age: 18,
+    tkaTrack: "12",
+    kelas: "12-RIO-DE-JANEIRO",
+    pilihanIds: ["fisika", "kimia"],
+    onboardingCompletedAt: onboardedAt,
+    streakCount: 0,
+    streakLastDate: null,
+  };
+
   for (const spi of SPI_CLASSES) {
     const students = ROSTER[spi.id] ?? [];
     for (const student of students) {

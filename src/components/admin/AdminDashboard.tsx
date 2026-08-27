@@ -92,7 +92,7 @@ export function AdminDashboard() {
         {t("admin.generated", { when: when(data.generatedAt, locale), today: data.today })}
       </p>
       <p className="admin-note" role="status">
-        {t("admin.demoStore")}
+        {t(data.persistStore ? "admin.savedStore" : "admin.demoStore")}
       </p>
 
       <section aria-labelledby="admin-kpis">

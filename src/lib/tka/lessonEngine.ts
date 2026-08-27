@@ -16,20 +16,10 @@ export function pickLessonItems(
   bank: TkaQuestion[],
   random: () => number = Math.random,
 ): TkaQuestion[] {
-  const primary = shuffle(
+  return shuffle(
     bank.filter((q) => q.skillId === skillId),
     random,
-  );
-  const rest = shuffle(
-    bank.filter((q) => q.skillId !== skillId),
-    random,
-  );
-  const unique: TkaQuestion[] = [];
-  for (const q of [...primary, ...rest]) {
-    if (unique.length >= LESSON_UNIQUE_TARGET) break;
-    unique.push(q);
-  }
-  return unique;
+  ).slice(0, LESSON_UNIQUE_TARGET);
 }
 
 /** Insert a redemption of `id` at least two seats later (not next). */

@@ -20,7 +20,7 @@ function q(id: string, skillId: string): TkaQuestion {
 }
 
 describe("lessonEngine", () => {
-  it("prefers the target skill then fills to 6", () => {
+  it("only uses questions from the target skill", () => {
     const bank = [
       q("a", "spl"),
       q("b", "spl"),
@@ -31,8 +31,8 @@ describe("lessonEngine", () => {
       q("g", "stat"),
     ];
     const picked = pickLessonItems("spl", bank, () => 0);
-    expect(picked).toHaveLength(6);
-    expect(picked.slice(0, 2).map((x) => x.skillId)).toEqual(["spl", "spl"]);
+    expect(picked.map((x) => x.id).sort()).toEqual(["a", "b"]);
+    expect(picked.every((x) => x.skillId === "spl")).toBe(true);
   });
 
   it("does not put redemption as the next card when other items remain", () => {
