@@ -47,7 +47,7 @@ export function CompetitionsView() {
   const [query, setQuery] = useState("");
   const [field, setField] = useState<CompetitionField | "all">("all");
   const [scope, setScope] = useState<CompetitionScope | "all">("all");
-  const [openOnly, setOpenOnly] = useState(true);
+  const [openOnly, setOpenOnly] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +66,13 @@ export function CompetitionsView() {
       setStale(data.live === false);
       setNow(new Date());
     } catch {
+      try {
+        const local = await fetch("/competitions-curated.json", { cache: "no-store" });
+        const payload = (await local.json()) as { competitions?: Competition[] };
+        setCompetitions(payload.competitions ?? []);
+      } catch {
+        setCompetitions([]);
+      }
       setStale(true);
     } finally {
       setLoading(false);
@@ -105,7 +112,7 @@ export function CompetitionsView() {
     setQuery("");
     setField("all");
     setScope("all");
-    setOpenOnly(true);
+    setOpenOnly(false);
   }
 
   function deadlineLabel(days: number, open: boolean): string {

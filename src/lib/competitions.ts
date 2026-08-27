@@ -1,5 +1,18 @@
 import type { Competition } from "@/types";
 
+/** Live official cards win on id collision; niche listings fill the rest. */
+export function mergeCompetitionCatalogs(
+  official: Competition[],
+  curated: Competition[],
+): Competition[] {
+  const byId = new Map<string, Competition>();
+  for (const competition of curated) byId.set(competition.id, competition);
+  for (const competition of official) byId.set(competition.id, competition);
+  return [...byId.values()].sort((a, b) =>
+    a.registrationDeadline.localeCompare(b.registrationDeadline),
+  );
+}
+
 export function todayISODate(now = new Date()): string {
   const y = now.getFullYear();
   const m = String(now.getMonth() + 1).padStart(2, "0");

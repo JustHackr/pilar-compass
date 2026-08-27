@@ -294,13 +294,14 @@ const en: Dict = {
   "admin.event.tryout_submit": "Tryout submitted",
   "admin.event.logout": "Sign out",
 
-  "comps.eyebrow": "Puspresnas · Grades 7–12",
+  "comps.eyebrow": "50+ lomba · Grades 7–12",
   "comps.title": "Competition finder",
   "comps.lede":
-    "Official Ministry ajang talenta from Puspresnas — OSN, OPSI, FIKSI, LKS, FLS3N, debate. The list refreshes itself from the national calendar.",
-  "comps.source": "Calendar: Pusat Prestasi Nasional. Registration via BPTI.",
-  "comps.loading": "Loading the official Puspresnas calendar…",
-  "comps.loadError": "Could not refresh Puspresnas. Showing the last saved calendar.",
+    "Puspresnas ajang talenta plus niche open contests — film, photo, writing, robotics, olympiads, MUN, hackathons. Uncheck Open only to see the full board.",
+  "comps.source":
+    "Live calendar: Pusat Prestasi Nasional (BPTI). Extra listings: official festival and olympiad sites, including Festival Film Indonesia.",
+  "comps.loading": "Loading competitions…",
+  "comps.loadError": "Could not refresh Puspresnas. Showing the saved calendar plus niche listings.",
   "comps.openNow": "open now",
   "comps.due7": "due in 7 days",
   "comps.search": "Search name, topic, tags…",
@@ -723,13 +724,15 @@ const id: Dict = {
   "admin.event.tryout_submit": "Tryout dikumpulkan",
   "admin.event.logout": "Keluar",
 
-  "comps.eyebrow": "Puspresnas · Kelas 7–12",
+  "comps.eyebrow": "50+ lomba · Kelas 7–12",
   "comps.title": "Pencari kompetisi",
   "comps.lede":
-    "Ajang talenta resmi Kementerian dari Puspresnas — OSN, OPSI, FIKSI, LKS, FLS3N, debat. Daftar ini memperbarui sendiri dari kalender nasional.",
-  "comps.source": "Kalender: Pusat Prestasi Nasional. Pendaftaran lewat BPTI.",
-  "comps.loading": "Memuat kalender resmi Puspresnas…",
-  "comps.loadError": "Tidak bisa menyegarkan Puspresnas. Menampilkan kalender tersimpan terakhir.",
+    "Ajang talenta Puspresnas plus lomba niche — film, foto, menulis, robotik, olimpiade, MUN, hackathon. Matikan Hanya yang buka untuk melihat seluruh papan.",
+  "comps.source":
+    "Kalender hidup: Pusat Prestasi Nasional (BPTI). Tambahan: situs resmi festival dan olimpiade, termasuk Festival Film Indonesia.",
+  "comps.loading": "Memuat kompetisi…",
+  "comps.loadError":
+    "Tidak bisa menyegarkan Puspresnas. Menampilkan kalender tersimpan plus lomba niche.",
   "comps.openNow": "masih buka",
   "comps.due7": "deadline ≤ 7 hari",
   "comps.search": "Cari nama, topik, tag…",
