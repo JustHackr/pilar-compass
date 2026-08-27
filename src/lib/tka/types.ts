@@ -8,6 +8,7 @@ export type TkaProfile = {
   tkaTrack: TkaTrack;
   kelas: string;
   pilihanIds: string[];
+  avatarDataUrl?: string | null;
   onboardingCompletedAt: string | null;
   streakCount: number;
   streakLastDate: string | null;

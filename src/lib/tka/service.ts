@@ -19,6 +19,7 @@ import {
   type TkaPublicMe,
 } from "./types";
 import { pushEvent } from "./admin";
+import { normalizeAvatarDataUrl } from "./avatar";
 import { wibDateStr } from "./wib";
 
 export function emailKey(email: string): string {
@@ -158,6 +159,7 @@ export async function saveOnboarding(
     tkaTrack: string;
     kelas: string;
     pilihanIds: string[];
+    avatarDataUrl?: string | null;
   },
 ): Promise<{ ok: true; profile: TkaProfile } | { ok: false; error: string }> {
   const name = input.displayName.trim();
@@ -176,6 +178,11 @@ export async function saveOnboarding(
   if (input.tkaTrack !== "12" && pilihan.length !== 0) {
     return { ok: false, error: "pilihan" };
   }
+  let avatarDataUrl: string | null | undefined;
+  if (input.avatarDataUrl !== undefined) {
+    avatarDataUrl = normalizeAvatarDataUrl(input.avatarDataUrl);
+    if (avatarDataUrl === undefined) return { ok: false, error: "avatar" };
+  }
 
   const profile = await mutateStore((db) => {
     const existing = db.profiles[email];
@@ -186,6 +193,8 @@ export async function saveOnboarding(
       tkaTrack: input.tkaTrack as TkaTrack,
       kelas,
       pilihanIds: input.tkaTrack === "12" ? pilihan : [],
+      avatarDataUrl:
+        avatarDataUrl !== undefined ? avatarDataUrl : (existing?.avatarDataUrl ?? null),
       onboardingCompletedAt: new Date().toISOString(),
       streakCount: existing?.streakCount ?? 0,
       streakLastDate: existing?.streakLastDate ?? null,

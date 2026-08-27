@@ -81,6 +81,26 @@ describe("tkaGateRedirect", () => {
       }),
     ).toBeNull();
   });
+
+  it("lets an onboarded student open the profile editor", () => {
+    expect(
+      tkaGateRedirect({
+        pathname: "/profile",
+        email: "justin.rizki@pilar.sch.id",
+        onboarded: true,
+      }),
+    ).toBeNull();
+  });
+
+  it("sends a new student from the profile editor to onboarding", () => {
+    expect(
+      tkaGateRedirect({
+        pathname: "/profile",
+        email: "new.student@pilar.sch.id",
+        onboarded: false,
+      }),
+    ).toBe("/tka/onboarding");
+  });
 });
 
 describe("preferOnboardedMe", () => {

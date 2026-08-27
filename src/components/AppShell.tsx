@@ -11,6 +11,8 @@ import { LocaleToggle } from "@/lib/i18n/LocaleToggle";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { isAdminEmail } from "@/data/spi-classes";
 import { logClientActivity, tkaFetchInit } from "@/lib/tka/client";
+import { cachedProfile } from "@/lib/tka/profileCache";
+import { ProfileAvatarMark } from "@/components/tka/ProfileAvatarMark";
 
 type Props = {
   email: string;
@@ -22,6 +24,8 @@ export function AppShell({ email, onSignOut, children }: Props) {
   const pathname = usePathname();
   const { t } = useLocale();
   const [replayTour, setReplayTour] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState("");
 
   const lastPath = useRef<string | null>(null);
 
@@ -41,6 +45,12 @@ export function AppShell({ email, onSignOut, children }: Props) {
     lastPath.current = pathname;
     logClientActivity("page_view", pathname);
   }, [pathname]);
+
+  useEffect(() => {
+    const cached = cachedProfile(email);
+    setAvatarUrl(cached?.avatarDataUrl ?? null);
+    setDisplayName(cached?.displayName ?? "");
+  }, [email, pathname]);
 
   const links = [
     { href: "/", label: t("nav.home") },
@@ -66,6 +76,30 @@ export function AppShell({ email, onSignOut, children }: Props) {
             <span className="topbar-email" title={email}>
               {email}
             </span>
+            <Link
+              href="/profile"
+              className="topbar-avatar"
+              aria-label={t("topbar.editProfile")}
+              title={t("topbar.editProfile")}
+            >
+              <ProfileAvatarMark src={avatarUrl} label={displayName || email} />
+            </Link>
+            <Link
+              href="/profile"
+              className="topbar-edit"
+              aria-label={t("topbar.editProfile")}
+              title={t("topbar.editProfile")}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
             <button type="button" className="topbar-signout" onClick={signOut}>
               {t("topbar.signOut")}
             </button>

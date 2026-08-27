@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     tkaTrack?: string;
     kelas?: string;
     pilihanIds?: string[];
+    avatarDataUrl?: string | null;
   } | null;
   if (!body) return NextResponse.json({ error: "body" }, { status: 400 });
   const result = await saveOnboarding(email, {
@@ -22,6 +23,9 @@ export async function POST(req: Request) {
     tkaTrack: body.tkaTrack ?? "",
     kelas: body.kelas ?? "",
     pilihanIds: Array.isArray(body.pilihanIds) ? body.pilihanIds : [],
+    ...(Object.prototype.hasOwnProperty.call(body, "avatarDataUrl")
+      ? { avatarDataUrl: body.avatarDataUrl ?? null }
+      : {}),
   });
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: 400 });
   const res = NextResponse.json({ ok: true, profile: result.profile });

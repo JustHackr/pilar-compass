@@ -292,6 +292,8 @@ select {
 }
 
 .topbar a:hover,
+.topbar-edit:hover,
+.topbar-avatar:hover,
 .topbar-signout:hover {
   color: var(--yellow);
 }
@@ -307,17 +309,54 @@ select {
   white-space: nowrap;
 }
 
+.topbar-edit,
+.topbar-avatar,
 .topbar-signout {
   background: transparent;
   border: 1px solid rgba(208, 214, 221, 0.35);
   color: var(--topbar-text);
   border-radius: var(--radius);
-  padding: 4px 10px;
   cursor: pointer;
+}
+
+.topbar-edit,
+.topbar-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  text-decoration: none;
+}
+
+.topbar-avatar {
+  border-radius: 999px;
+  overflow: hidden;
+  width: 44px;
+  height: 44px;
+}
+
+.topbar-signout {
+  min-height: 44px;
+  padding: 4px 10px;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 700;
+}
+
+.topbar-edit:focus-visible,
+.topbar-avatar:focus-visible,
+.topbar-signout:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+.topbar-edit:active,
+.topbar-avatar:active,
+.topbar-signout:active {
+  transform: translateY(1px);
 }
 
 .locale-toggle {
@@ -1298,6 +1337,62 @@ select {
   max-width: 720px;
 }
 
+.profile-photo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 16px;
+}
+
+.profile-photo-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--navy);
+  background: var(--paper-2);
+}
+
+.profile-photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.profile-photo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-avatar-img,
+.profile-avatar-fallback {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-avatar-img {
+  object-fit: cover;
+}
+
+.profile-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: var(--yellow);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.topbar-avatar .profile-avatar-fallback {
+  font-size: 14px;
+}
+
 .tka-fieldset {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -1832,7 +1927,11 @@ select.field-input {
 @media (prefers-reduced-motion: reduce) {
   .btn-primary,
   .btn-secondary,
-  .tka-card {
+  .tka-card,
+  .topbar-edit,
+  .topbar-avatar,
+  .topbar-signout {
     transition: none;
+    transform: none;
   }
 }

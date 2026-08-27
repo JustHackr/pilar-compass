@@ -62,6 +62,7 @@ async function restoreServerProfile(cached: TkaMe): Promise<boolean> {
         tkaTrack: profile.tkaTrack,
         kelas: profile.kelas,
         pilihanIds: profile.pilihanIds,
+        avatarDataUrl: profile.avatarDataUrl ?? null,
       }),
     }),
   );
