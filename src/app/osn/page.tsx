@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  ARCHIVE_HOME,
   OFFICIAL_HOME,
   officialBanksFor,
   levelsVisibleFor,
@@ -64,10 +63,6 @@ export default function OsnHubPage() {
         {t("osn.sourceNote")}{" "}
         <a href={OFFICIAL_HOME} target="_blank" rel="noopener noreferrer">
           Puspresnas
-        </a>
-        {" · "}
-        <a href={ARCHIVE_HOME} target="_blank" rel="noopener noreferrer">
-          {t("osn.archive")}
         </a>
       </p>
     </div>

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { OSN_PAPERS, OSN_SUBJECTS, papersForSubject, yearsForSubject } from "./bank";
+import { loadOsnQuestions } from "@/lib/osn/loadQuestions";
 
 describe("osn catalog", () => {
   it("has SD, SMP, and SMA fields from the archive", () => {
@@ -18,5 +19,18 @@ describe("osn catalog", () => {
   it("exposes year filters in descending order", () => {
     const years = yearsForSubject("sma", "kimia");
     expect(years[0]).toBeGreaterThan(years[years.length - 1]!);
+  });
+
+  it("loads extracted questions for an archive paper", () => {
+    const paper = OSN_PAPERS.find((p) => p.questionCount > 10);
+    expect(paper).toBeTruthy();
+    const questions = loadOsnQuestions(paper!.id);
+    expect(questions.length).toBeGreaterThan(10);
+    expect(questions.some((q) => q.type === "pilgan" && q.choices.length >= 4)).toBe(true);
+  });
+
+  it("rejects unsafe paper ids", () => {
+    expect(loadOsnQuestions("../secret")).toEqual([]);
+    expect(loadOsnQuestions("")).toEqual([]);
   });
 });

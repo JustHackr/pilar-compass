@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { questionById, questionsForSubject } from "@/data/tka/bank";
 import { tryoutById } from "@/data/tka/tryouts";
+import { paperById } from "@/data/osn/bank";
+import { loadOsnQuestions } from "@/lib/osn/loadQuestions";
+import { scoreOsnPaper } from "@/lib/osn/scoring";
 import { isPilihanId } from "@/data/tka/catalog";
+import type { OsnQuestion } from "@/data/osn/types";
 import { isAdminEmail, matchSpiClass } from "@/data/spi-classes";
 import { isTkaTrack, normalizeKelas, type TkaTrack } from "./grade";
 import { gradeItem, monthlyActivityScore, type LessonCheck } from "./scoring";
@@ -326,6 +330,54 @@ export async function submitTryout(input: {
       meta: { packId: input.packId, scorePercent, correct, total },
     });
     return { ok: true as const, attempt, streakCount: profile.streakCount, review };
+  });
+}
+
+export async function submitOsnPaper(input: {
+  email: string;
+  paperId: string;
+  durationSeconds: number;
+  answers: Record<string, number>;
+  questions?: OsnQuestion[];
+}) {
+  const paper = paperById(input.paperId);
+  if (!paper) return { ok: false as const, error: "paper" };
+  const questions = input.questions?.length ? input.questions : loadOsnQuestions(paper.id);
+  if (questions.length === 0) return { ok: false as const, error: "questions" };
+  const scored = scoreOsnPaper(questions, input.answers);
+  const today = wibDateStr();
+
+  return mutateStore((db) => {
+    const profile = db.profiles[input.email];
+    if (!profile?.onboardingCompletedAt) return { ok: false as const, error: "onboarding" };
+    const streak = applyQualifyingActivity(
+      { streakCount: profile.streakCount, streakLastDate: profile.streakLastDate },
+      today,
+    );
+    profile.streakCount = streak.streakCount;
+    profile.streakLastDate = streak.streakLastDate;
+    bumpDaily(db.daily, input.email, today, {
+      tryoutsSubmitted: 1,
+      streakCounted: true,
+    });
+    const attempt = {
+      id: randomUUID(),
+      email: input.email,
+      packId: `osn:${paper.id}`,
+      submittedAt: new Date().toISOString(),
+      scorePercent: scored.scorePercent,
+      durationSeconds: Math.max(0, Math.floor(input.durationSeconds)),
+      correct: scored.correct,
+      total: scored.total,
+    };
+    db.tryouts.push(attempt);
+    pushEvent(db, {
+      email: input.email,
+      type: "osn_paper",
+      detail: `${paper.title.slice(0, 160)} · ${scored.scorePercent}% (${scored.correct}/${scored.total})`,
+      meta: { paperId: paper.id, scorePercent: scored.scorePercent, correct: scored.correct, total: scored.total },
+    });
+    return { ok: true as const, attempt, streakCount: profile.streakCount, ...scored };
   });
 }
 

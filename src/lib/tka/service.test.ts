@@ -82,3 +82,32 @@ describe("restoreStudentSnapshot", () => {
     expect(me.mastery.some((m) => m.skillId === "spl" && m.status === "mastered")).toBe(true);
   });
 });
+
+describe("submitOsnPaper", () => {
+  beforeEach(() => {
+    resetStoreForTests();
+  });
+
+  it("stores a scored OSN archive attempt", async () => {
+    const { submitOsnPaper } = await import("./service");
+    const { loadOsnQuestions } = await import("@/lib/osn/loadQuestions");
+    const questions = loadOsnQuestions("MjQ5");
+    expect(questions.length).toBeGreaterThan(10);
+    const answers: Record<string, number> = {};
+    for (const q of questions.filter((item) => item.type === "pilgan").slice(0, 8)) {
+      answers[q.id] = 0;
+    }
+    const result = await submitOsnPaper({
+      email: "admin@pilar.sch.id",
+      paperId: "MjQ5",
+      durationSeconds: 45,
+      answers,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.attempt.packId).toBe("osn:MjQ5");
+    expect(result.total).toBeGreaterThan(8);
+    expect(result.correct).toBe(8);
+    expect(result.scorePercent).toBeGreaterThan(0);
+  });
+});

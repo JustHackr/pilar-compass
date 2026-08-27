@@ -29,6 +29,7 @@ export type OsnQuestion = {
   type: "pilgan" | "essay";
   stemHtml: string;
   choices: string[];
+  key?: number;
   discussionUrl?: string;
 };
 

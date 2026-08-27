@@ -118,19 +118,9 @@ export default function OsnSubjectPage() {
               </p>
               <h3>{p.title}</h3>
               <p>{t("osn.questionCount", { n: p.questionCount })}</p>
-              <div className="tka-actions">
-                <Link className="btn-primary" href={`/osn/paper/${p.id}`}>
-                  {t("osn.startPaper")}
-                </Link>
-                <a
-                  className="btn-secondary"
-                  href={p.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t("osn.openSource")}
-                </a>
-              </div>
+              <Link className="btn-primary" href={`/osn/paper/${p.id}`}>
+                {t("osn.startPaper")}
+              </Link>
             </div>
           ))}
         </div>
