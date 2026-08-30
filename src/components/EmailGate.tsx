@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { SCHOOL } from "@/config/school";
 import { isValidEmail, unlockSession } from "@/lib/session";
 import { isTkaOnboarded, markTkaOnboarded } from "@/lib/tka/onboardingLock";
 import { useLocale } from "@/lib/i18n/LocaleContext";
@@ -52,13 +53,13 @@ export function EmailGate({ onUnlock }: Props) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/spi-logo.png"
-          alt="Sekolah Pilar Indonesia"
+          alt={SCHOOL.name}
           width={180}
           height={45}
           style={{ height: 45, width: "auto", marginBottom: 12 }}
         />
         <p className="eyebrow">{t("gate.eyebrow")}</p>
-        <h1 className="brand-title">Pilar Compass</h1>
+        <h1 className="brand-title">{SCHOOL.productName}</h1>
         <p className="lede">{t("gate.lede")}</p>
         <form onSubmit={handleSubmit} className="gate-form">
           <label htmlFor="email" className="field-label">
@@ -69,7 +70,7 @@ export function EmailGate({ onUnlock }: Props) {
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="name@pilar.sch.id"
+            placeholder={`name@${SCHOOL.emailDomain}`}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);

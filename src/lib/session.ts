@@ -1,3 +1,4 @@
+import { SCHOOL } from "@/config/school";
 import { TKA_DONE_COOKIE } from "@/lib/tka/onboardingLock";
 
 export const EMAIL_KEY = "pilar_compass_email";
@@ -46,7 +47,7 @@ export function restoreStoredEmail(): string | null {
   return stored;
 }
 
-export const SCHOOL_EMAIL_DOMAIN = "pilar.sch.id";
+export const SCHOOL_EMAIL_DOMAIN = SCHOOL.emailDomain;
 
 export function isValidEmail(email: string): boolean {
   const t = email.trim().toLowerCase();

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { SCHOOL } from "@/config/school";
 import { clearSession } from "@/lib/session";
 import { resetTour } from "@/lib/tour";
 import { useLocale } from "@/lib/i18n/LocaleContext";
@@ -67,7 +68,7 @@ export function AppShell({ email, onSignOut, children }: Props) {
       <div className="topbar">
         <div className="topbar-inner">
           <div className="topbar-contact">
-            <a href="mailto:spi@pilar.sch.id">spi@pilar.sch.id</a>
+            <a href={`mailto:${SCHOOL.contactEmail}`}>{SCHOOL.contactEmail}</a>
             <span className="topbar-sep">·</span>
             <span>{t("topbar.forStudents")}</span>
           </div>
@@ -112,14 +113,14 @@ export function AppShell({ email, onSignOut, children }: Props) {
           <Link href="/" className="logo-lockup">
             <Image
               src="/spi-logo.png"
-              alt="Sekolah Pilar Indonesia"
+              alt={SCHOOL.name}
               width={200}
               height={56}
               className="spi-logo"
               priority
             />
             <span className="logo-product">
-              <strong>Pilar Compass</strong>
+              <strong>{SCHOOL.productName}</strong>
               <small>{t("logo.product")}</small>
             </span>
           </Link>
@@ -180,7 +181,7 @@ export function AppShell({ email, onSignOut, children }: Props) {
               </a>
             </p>
             <p>
-              <a href="mailto:spi@pilar.sch.id">spi@pilar.sch.id</a>
+              <a href={`mailto:${SCHOOL.contactEmail}`}>{SCHOOL.contactEmail}</a>
             </p>
           </div>
         </div>

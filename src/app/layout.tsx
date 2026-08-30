@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ClientApp } from "@/components/ClientApp";
+import { SCHOOL } from "@/config/school";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -10,9 +11,9 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Pilar Compass · Sekolah Pilar Indonesia",
+  title: `${SCHOOL.productName} · ${SCHOOL.name}`,
   description:
-    "Academic competition finder and university match calculator for Sekolah Pilar Indonesia students.",
+    "Academic competition finder, TKA/OSN practice, official textbooks, and a university match calculator for school students.",
 };
 
 export default function RootLayout({

@@ -2,6 +2,16 @@
   "name": "student-compass",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "description": "Open-source student tools for Sekolah Pilar Indonesia — competitions, TKA/OSN practice, textbooks, and a university match calculator.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JustHackr/pilar-compass.git"
+  },
+  "homepage": "https://pilar-compass.vercel.app",
+  "bugs": {
+    "url": "https://github.com/JustHackr/pilar-compass/issues"
+  },
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",

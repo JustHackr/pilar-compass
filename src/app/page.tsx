@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SCHOOL } from "@/config/school";
 import { useLocale } from "@/lib/i18n/LocaleContext";
 
 export default function HomePage() {
@@ -10,8 +11,8 @@ export default function HomePage() {
     <div className="landing">
       <section className="landing-hero">
         <div className="landing-copy animate-rise">
-          <p className="eyebrow">Sekolah Pilar Indonesia</p>
-          <h1 className="brand-title">Pilar Compass</h1>
+          <p className="eyebrow">{SCHOOL.name}</p>
+          <h1 className="brand-title">{SCHOOL.productName}</h1>
           <p className="lede">{t("home.lede")}</p>
           <div className="cta-row">
             <Link href="/tka" className="btn-primary">

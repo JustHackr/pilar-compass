@@ -1,18 +1,24 @@
 # Pilar Compass
 
-> For Sekolah Pilar Indonesia students — find open academic competitions and estimate a transparent university match %.
+> Open-source student tools for Sekolah Pilar Indonesia — competitions, TKA/OSN practice, SIBI textbooks, and a transparent university match %. Fork it onto your own school domain.
 
 ## Product
 - School: Sekolah Pilar Indonesia (https://sekolah-pilar-indonesia.sch.id/)
-- Audience: SPI Junior & Senior High (members only via soft email gate; prototype accepts any email)
-- Modules: Competition finder + University match calculator
+- Live: https://pilar-compass.vercel.app
+- Repo: https://github.com/JustHackr/pilar-compass
+- License: MIT
+- Audience: SPI Junior & Senior High (email-domain gate; demo accepts `@pilar.sch.id`)
+- Modules: Competitions · TKA · OSN · Materials · University calculator · Admin dashboard
 
 ## Docs
+- [README](README.md)
+- [Usage](docs/USAGE.md)
+- [Self-host / own domain](docs/SELF_HOSTING.md)
 - [PRD](docs/PRD.md)
 - [RFC](docs/RFC.md)
 
 ## Stack
-Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · Netlify
+Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · optional Postgres · Vercel
 
 ## Run locally
 ```bash
@@ -20,14 +26,17 @@ npm install
 npm run dev
 ```
 
+Demo unlock: `admin@pilar.sch.id` (admin) or `rina.12-rio-de-janeiro@pilar.sch.id` (student).
+
 ## Test
 ```bash
 npm test
 ```
 
 ## Deploy
-Connect this repo to Netlify (see `netlify.toml`). Build command: `npm run build`.
+Import the repo on Vercel. Build: `npm run build`. Optional `DATABASE_URL` for shared TKA progress. Custom domain: Vercel → Settings → Domains. School identity: `src/config/school.ts`.
 
 ## Honesty notes
-- Competition list is curated JSON (not live scrape). Refresh re-filters by today's date.
+- Competition list is public/curated data plus date logic. Refresh: `npm run competitions:scrape`.
 - Match % is an illustrative heuristic with visible weights — not official admissions odds.
+- Admin homerooms in the demo are seeded sample students.

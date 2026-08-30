@@ -1,3 +1,4 @@
+import { SCHOOL } from "@/config/school";
 import type { TkaTrack } from "@/lib/tka/grade";
 
 export type SpiClass = {
@@ -25,7 +26,7 @@ export const SPI_CLASSES: SpiClass[] = [
   { id: "12-ROTTERDAM", grade: 12, city: "Rotterdam", label: "Grade 12 Rotterdam", tkaTrack: "12" },
 ];
 
-export const ADMIN_EMAIL = "admin@pilar.sch.id";
+export const ADMIN_EMAIL = SCHOOL.adminEmail;
 
 export function isAdminEmail(email: string | null | undefined): boolean {
   return (email ?? "").toLowerCase().trim() === ADMIN_EMAIL;
